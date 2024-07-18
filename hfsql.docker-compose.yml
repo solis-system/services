@@ -1,0 +1,16 @@
+services:
+  hfsql:
+    container_name: hfsql
+    image: windev/hfsql:FR280085e
+    restart: always
+    environment:
+      - HFSQL_RANDOM_PASSWORD=yes
+      - HFSQL_USER=admin
+    volumes:
+      - hfsql-data:/var/lib/hfsql
+    ports:
+      - 4900:4900
+
+volumes:
+  hfsql-data:
+    external: true

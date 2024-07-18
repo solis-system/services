@@ -1,0 +1,32 @@
+services:
+  pma:
+    container_name: pma
+    image: phpmyadmin:5.2.1-apache
+    restart: always
+    networks:
+      - proxy-network
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb:11.0.2
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - proxy-network
+    env_file:
+      - .env
+
+volumes:
+  mariadb-data:
+    external: true
+
+networks:
+  proxy-network:
+    external: true

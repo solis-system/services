@@ -1,0 +1,76 @@
+services:
+  mailpit:
+    container_name: mailpit
+    restart: always
+    image: axllent/mailpit
+    ports:
+      - 1025:1025
+      - 8025:8025
+    volumes:
+      - mailpit-data:/data
+    networks:
+      - proxy-network
+    environment:
+      TZ: Europe/Paris
+
+  wiki:
+    container_name: wiki
+    restart: always
+    image: ghcr.io/requarks/wiki:2
+    environment:
+      DB_TYPE: mysql
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: 9EAKrvk2rF@kv3
+      DB_NAME: wiki
+    networks:
+      - proxy-network
+
+  signaturepdf:
+    container_name: signaturepdf
+    restart: always
+    build:
+      context: signaturepdf
+      dockerfile: Dockerfile
+    ports:
+      - "8095:80"
+    environment:
+      - SERVERNAME=signature.lola-france.fr
+      - UPLOAD_MAX_FILESIZE=48M
+      - POST_MAX_SIZE=48M
+      - MAX_FILE_UPLOADS=401
+      - PDF_STORAGE_PATH=/data
+    networks:
+      - proxy-network
+
+  n8n:
+    container_name: n8n
+    restart: always
+    image: n8nio/n8n:latest
+    networks:
+      - proxy-network
+    volumes:
+      - n8n-data:/home/node/.n8n
+
+  uptime:
+    container_name: uptime
+    restart: always
+    image: louislam/uptime-kuma:1.23.8
+    networks:
+      - proxy-network
+    volumes:
+      - uptime-kuma:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  mailpit-data:
+  uptime-kuma:
+  grafana-data:
+  grafana-conf:
+  n8n-data:
+    external: true
+
+networks:
+  proxy-network:
+    external: true
