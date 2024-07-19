@@ -1,0 +1,26 @@
+services:
+  registry:
+    container_name: registry-server
+    image: registry:latest
+    ports:
+      - "5000:5000"
+
+  registry-ui:
+    container_name: registry-ui
+    image: joxit/docker-registry-ui:latest
+    restart: always
+    ports:
+      - "8082:80"
+    environment:
+      REGISTRY_TITLE: "Solis Registry"
+      REGISTRY_URL: "http://localhost:5000"
+      DELETE_IMAGES: true
+      SINGLE_REGISTRY: true
+    depends_on:
+      - registry
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true
