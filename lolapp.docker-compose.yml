@@ -1,0 +1,10 @@
+services:
+  api:
+    container_name: lolapp-api
+    image: ${REGISTRY_URL}/api:latest
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true
