@@ -4,6 +4,11 @@ services:
     image: ${REGISTRY_URL}/api:latest
     networks:
       - proxy-network
+  app:
+    container_name: lolapp-app
+    image: ${REGISTRY_URL}/app:latest
+    networks:
+      - proxy-network
 
 networks:
   proxy-network:
