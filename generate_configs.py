@@ -3,15 +3,19 @@ import logging
 import os
 from dotenv import load_dotenv
 
-# Charger les variables d'environnement depuis le fichier .env
 load_dotenv()
 
+DOMAIN = os.getenv('DOMAIN')
 NETWORK_NAME = 'proxy-network'
-DOMAIN = os.getenv('DOMAIN', 'default-domain.com')  # Utilise une valeur par défaut si DOMAIN n'est pas défini
+HOMEPAGE_SERVICE_PATH='config/homepage/services.yaml'
+ENTRYPOINT_YML_PATH='custom.yml'
+
+if DOMAIN is None:
+    raise RuntimeError("The DOMAIN environment variable is not set.")
 
 SERVICE_KEYS = {
     'required': {'image'},
-    'optional': {'environment', 'volumes', 'labels', 'reverse_proxy', 'ports', 'command', 'depends_on', 'storage', 'title', 'description', 'icon', 'showStats'}
+    'optional': {'title', 'description', 'icon', 'environment', 'volumes', 'labels', 'reverse_proxy', 'ports', 'command', 'depends_on', 'storage'}
 }
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -39,7 +43,7 @@ class ConfigGenerator:
 
             # Générer services.yml
             services_yml = self.generate_services_yml()
-            self.write_file('config/homepage/services.yaml', services_yml)
+            self.write_file(HOMEPAGE_SERVICE_PATH, services_yml)
 
             logging.info("Files generated successfully!")
 
@@ -53,6 +57,14 @@ class ConfigGenerator:
         except yaml.YAMLError as exc:
             logging.error(f"Error parsing YAML file: {self.yml_path}\n{exc}")
             return None
+
+    def write_file(self, filepath, content):
+        try:
+            with open(filepath, 'w') as file:
+                file.write(content)
+                logging.info(f"File written successfully: {filepath}")
+        except IOError as exc:
+            logging.error(f"Error writing file: {filepath}\n{exc}")
 
     def _get_reverse_proxy_details(self, reverse_proxy, service_name):
         subdomain = service_name
@@ -69,7 +81,7 @@ class ConfigGenerator:
                     logging.warning(f"Service definition incomplete: {service_name}")
                     continue
 
-                service_def = {
+                compose_service_item = {
                     'container_name': service_name,
                     'image': service['image'],
                     'restart': 'always',
@@ -77,27 +89,28 @@ class ConfigGenerator:
                 }
 
                 if 'environment' in service:
-                    service_def['environment'] = [f"{var}=${{{var}}}" for var in service['environment']]
+                    compose_service_item['environment'] = [f"{var}=${{{var}}}" for var in service['environment']]
                 if 'volumes' in service:
-                    service_def['volumes'] = service['volumes']
+                    compose_service_item['volumes'] = service['volumes']
                 if 'labels' in service:
-                    service_def['labels'] = service['labels']
+                    compose_service_item['labels'] = service['labels']
                 if 'ports' in service:
-                    service_def['ports'] = service['ports']
+                    compose_service_item['ports'] = service['ports']
                 if 'command' in service:
-                    service_def['command'] = service['command']
+                    compose_service_item['command'] = service['command']
                 if 'depends_on' in service:
-                    service_def['depends_on'] = service['depends_on']
+                    compose_service_item['depends_on'] = service['depends_on']
 
+                # Create storage volume
                 if 'storage' in service:
                     volume_name = f"{service_name}_data"
                     if service['storage'] == 'internal':
                         self.docker_compose['volumes'][volume_name] = {}
                     else:
                         self.docker_compose['volumes'][volume_name] = {'external': True}
-                    service_def['volumes'] = service_def.get('volumes', []) + [f"{volume_name}:/data"]
+                    compose_service_item['volumes'] = compose_service_item.get('volumes', []) + [f"{volume_name}:/data"]
 
-                self.docker_compose['services'][service_name] = service_def
+                self.docker_compose['services'][service_name] = compose_service_item
 
                 # Check for extra keys
                 extra_keys = set(service.keys()) - SERVICE_KEYS['required'] - SERVICE_KEYS['optional']
@@ -159,13 +172,5 @@ class ConfigGenerator:
             grouped_services.append({group: services})
         return yaml.dump(grouped_services, sort_keys=False)
 
-    def write_file(self, filepath, content):
-        try:
-            with open(filepath, 'w') as file:
-                file.write(content)
-                logging.info(f"File written successfully: {filepath}")
-        except IOError as exc:
-            logging.error(f"Error writing file: {filepath}\n{exc}")
-
 if __name__ == "__main__":
-    generator = ConfigGenerator('custom.yml')
+    generator = ConfigGenerator(ENTRYPOINT_YML_PATH)
