@@ -1,41 +1,4 @@
-version: '3.8'
 services:
-  caddy:
-    container_name: caddy
-    image: caddy:latest
-    restart: always
-    networks:
-    - proxy-network
-    volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-    - 80:80
-    - 443:443
-    - 443:443/udp
-    - 5000:5000
-  homepage:
-    container_name: homepage
-    image: ghcr.io/gethomepage/homepage:0.9.2
-    restart: always
-    networks:
-    - proxy-network
-    volumes:
-    - ./config/homepage:/app/config
-    - /var/run/docker.sock:/var/run/docker.sock
-  hfsql:
-    container_name: hfsql
-    image: windev/hfsql:FR280085e
-    restart: always
-    networks:
-    - proxy-network
-    environment:
-    - HFSQL_RANDOM_PASSWORD=${HFSQL_RANDOM_PASSWORD}
-    - HFSQL_USER=${HFSQL_USER}
-    volumes:
-    - hfsql-data:/var/lib/hfsql
-    - hfsql_data:/data
-    ports:
-    - 4900:4900
   solisws_api:
     container_name: solisws_api
     image: ${REGISTRY_URL}/api:latest
@@ -60,69 +23,6 @@ services:
     restart: always
     networks:
     - proxy-network
-  redis:
-    container_name: redis
-    image: redis/redis-stack
-    restart: always
-    networks:
-    - proxy-network
-    volumes:
-    - redis_data:/data
-  mailpit:
-    container_name: mailpit
-    image: axllent/mailpit
-    restart: always
-    networks:
-    - proxy-network
-    environment:
-    - TZ=Europe/Paris=${TZ=Europe/Paris}
-    volumes:
-    - mailpit_data:/data
-  mariadb:
-    container_name: mariadb
-    image: mariadb:11.0.2
-    restart: always
-    networks:
-    - proxy-network
-    environment:
-    - MARIADB_PASSWORD=${MARIADB_PASSWORD}
-    - MARIADB_USER=${MARIADB_USER}
-    - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
-    volumes:
-    - mariadb-data:/var/lib/mysql
-  minio:
-    container_name: minio
-    image: quay.io/minio/minio
-    restart: always
-    networks:
-    - proxy-network
-    environment:
-    - MINIO_ROOT_USER=${MINIO_ROOT_USER}
-    - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-    volumes:
-    - minio_data:/data
-    command: server /data --console-address :9090
-  registry:
-    container_name: registry
-    image: registry:latest
-    restart: always
-    networks:
-    - proxy-network
-    environment:
-    - BASIC_AUTH=${BASIC_AUTH}
-    volumes:
-    - registry_data:/var/lib/registry
-  registry-ui:
-    container_name: registry-ui
-    image: joxit/docker-registry-ui:latest
-    restart: always
-    networks:
-    - proxy-network
-    environment:
-    - REGISTRY_TITLE=${REGISTRY_TITLE}
-    - NGINX_PROXY_PASS_URL=${NGINX_PROXY_PASS_URL}
-    - DELETE_IMAGES=${DELETE_IMAGES}
-    - SINGLE_REGISTRY=${SINGLE_REGISTRY}
   webdev-a:
     container_name: webdev-a
     image: windev/webdev:FR280094s
@@ -135,13 +35,49 @@ services:
     - TZ=${TZ}
     volumes:
     - webdev-a_data:/var/lib/WEBDEV/28.0/
+    - webdev-a_data:/data
     command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
+  homepage:
+    container_name: homepage
+    image: ghcr.io/gethomepage/homepage
+    restart: always
+    networks:
+    - proxy-network
+    volumes:
+    - ./config/homepage:/app/config
+    - /var/run/docker.sock:/var/run/docker.sock
+  mailpit:
+    container_name: mailpit
+    image: axllent/mailpit
+    restart: always
+    networks:
+    - proxy-network
+    environment:
+    - TZ=${TZ}
+    volumes:
+    - mailpit_data:/data
+    - mailpit_data:/data
+  registry-ui:
+    container_name: registry-ui
+    image: joxit/docker-registry-ui:latest
+    restart: always
+    networks:
+    - proxy-network
+    environment:
+    - REGISTRY_TITLE=${REGISTRY_TITLE}
+    - NGINX_PROXY_PASS_URL=${NGINX_PROXY_PASS_URL}
+    - DELETE_IMAGES=${DELETE_IMAGES}
+    - SINGLE_REGISTRY=${SINGLE_REGISTRY}
   pma:
     container_name: pma
     image: phpmyadmin:5.2.1-apache
     restart: always
     networks:
     - proxy-network
+    environment:
+    - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+    - MARIADB_USER=${MARIADB_USER}
+    - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
     depends_on:
     - mariadb
   n8n:
@@ -152,6 +88,7 @@ services:
     - proxy-network
     volumes:
     - n8n_data:/home/node/.n8n
+    - n8n_data:/data
   uptime:
     container_name: uptime
     image: louislam/uptime-kuma:1.23.8
@@ -161,9 +98,94 @@ services:
     volumes:
     - uptime_data:/app/data
     - /var/run/docker.sock:/var/run/docker.sock
+    - uptime_data:/data
+  caddy:
+    container_name: caddy
+    image: caddy:latest
+    restart: always
+    networks:
+    - proxy-network
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+    - 80:80
+    - 443:443
+    - 443:443/udp
+    - 5000:5000
+  minio:
+    container_name: minio
+    image: quay.io/minio/minio
+    restart: always
+    networks:
+    - proxy-network
+    environment:
+    - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+    - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+    - minio_data:/data
+    - minio_data:/data
+    command: server /data --console-address :9090
+  registry:
+    container_name: registry
+    image: registry:latest
+    restart: always
+    networks:
+    - proxy-network
+    environment:
+    - BASIC_AUTH=${BASIC_AUTH}
+    volumes:
+    - registry_data:/var/lib/registry
+    - registry_data:/data
+  redis:
+    container_name: redis
+    image: redis/redis-stack
+    restart: always
+    networks:
+    - proxy-network
+    volumes:
+    - redis_data:/data
+    - redis_data:/data
+  mariadb:
+    container_name: mariadb
+    image: mariadb:11.0.2
+    restart: always
+    networks:
+    - proxy-network
+    environment:
+    - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+    - MARIADB_USER=${MARIADB_USER}
+    - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    volumes:
+    - mariadb_data:/var/lib/mysql
+    - mariadb_data:/data
+  hfsql:
+    container_name: hfsql
+    image: windev/hfsql:FR280085e
+    restart: always
+    networks:
+    - proxy-network
+    environment:
+    - HFSQL_RANDOM_PASSWORD=${HFSQL_RANDOM_PASSWORD}
+    - HFSQL_USER=${HFSQL_USER}
+    volumes:
+    - hfsql_data:/var/lib/hfsql
+    - hfsql_data:/data
+    ports:
+    - 4900:4900
 volumes:
-  hfsql_data:
+  webdev-a_data: {}
+  mailpit_data: {}
+  n8n_data: {}
+  uptime_data: {}
+  minio_data:
     external: true
+  registry_data:
+    external: true
+  redis_data: {}
+  mariadb_data:
+    external: true
+  hfsql_data: {}
 networks:
   proxy-network:
     external: true

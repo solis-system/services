@@ -6,9 +6,6 @@
     }
 }
 
-homepage.localhost {
-    reverse_proxy homepage:3000
-}
 api.localhost {
     reverse_proxy solisws_api:8000
 }
@@ -21,17 +18,17 @@ beta.api.localhost {
 beta.localhost {
     reverse_proxy lolafrance_pwa:80
 }
+ws-a.localhost {
+    reverse_proxy webdev-a:80
+}
+localhost {
+    reverse_proxy homepage:3000
+}
 mailpit.localhost {
     reverse_proxy mailpit:8025
 }
 registry.localhost {
-    reverse_proxy registry:80
-}
-registry.localhost {
     reverse_proxy registry-ui:80
-}
-ws-a.localhost {
-    reverse_proxy webdev-a:80
 }
 pma.localhost {
     reverse_proxy pma:80
@@ -41,4 +38,7 @@ n8n.localhost {
 }
 uptime.localhost {
     reverse_proxy uptime:3001
+}
+minio.localhost {
+    reverse_proxy minio:9090
 }

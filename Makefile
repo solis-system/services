@@ -1,21 +1,22 @@
-# Nom des fichiers de configuration docker-compose
 COMPOSE_FILE=docker-compose.yml
 COMPOSE_FILE_DEV=dev.docker-compose.yml
 
-# Détection de l'environnement
 ENV ?= prod
 
-# Sélection du fichier de configuration en fonction de l'environnement
 ifeq ($(ENV),dev)
     COMPOSE_FILES=$(COMPOSE_FILE) -f $(COMPOSE_FILE_DEV)
 else
     COMPOSE_FILES=$(COMPOSE_FILE)
 endif
 
-# Commandes docker-compose
 DOCKER_COMPOSE = docker-compose -f $(COMPOSE_FILES)
+GENERATE_CONFIG = python3 generate_configs.py
 
-# Fonctions pour afficher l'utilisation du Makefile
+
+.PHONY: generate_configs
+generate_configs:
+	$(GENERATE_CONFIG)
+
 .PHONY: help
 help:
 	@echo "Usage: make [command] [ENV=prod|dev] [SERVICE=service_name]"
@@ -30,18 +31,18 @@ help:
 	@echo "  ps           Lister les conteneurs"
 
 .PHONY: up
-up:
+up: generate_configs
 	$(DOCKER_COMPOSE) up -d
 
 .PHONY: down
-down:
+down: generate_configs
 	$(DOCKER_COMPOSE) down
 
 .PHONY: restart
-restart: down up
+restart: generate_configs down up
 
 .PHONY: start
-start:
+start: generate_configs
 	@if [ -z "$(SERVICE)" ]; then \
 		echo "Veuillez spécifier le service avec SERVICE=service_name"; \
 		exit 1; \
@@ -49,7 +50,7 @@ start:
 	$(DOCKER_COMPOSE) up -d $(SERVICE)
 
 .PHONY: stop
-stop:
+stop: generate_configs
 	@if [ -z "$(SERVICE)" ]; then \
 		echo "Veuillez spécifier le service avec SERVICE=service_name"; \
 		exit 1; \
