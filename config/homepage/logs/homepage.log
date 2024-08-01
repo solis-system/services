@@ -1,0 +1,196 @@
+[2024-07-30T12:25:39.268Z] info: docker.yaml was copied to the config folder
+[2024-07-30T12:25:39.271Z] info: services.yaml was copied to the config folder
+[2024-07-30T12:25:39.272Z] info: bookmarks.yaml was copied to the config folder
+[2024-07-30T12:25:39.288Z] info: widgets.yaml was copied to the config folder
+[2024-07-30T12:25:39.289Z] info: custom.css was copied to the config folder
+[2024-07-30T12:25:39.290Z] info: custom.js was copied to the config folder
+[2024-07-30T12:25:39.357Z] info: kubernetes.yaml was copied to the config folder
+[2024-07-30T12:31:45.992Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:31:45.993Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:31:46.775Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:31:46.776Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:31:47.022Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:31:47.022Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:31:51.695Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:31:51.696Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:32:38.459Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:32:38.461Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:32:38.587Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:32:38.588Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:32:39.244Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:32:39.245Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:32:50.622Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:32:50.623Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:32:52.041Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:32:52.042Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:32:53.307Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:32:53.307Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:33:10.620Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:33:10.620Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:33:32.343Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:33:32.345Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:33:33.142Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:33:33.144Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:33:33.742Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:33:33.743Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:33:39.513Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:33:39.514Z] error: TypeError: Cannot read properties of null (reading 'map')
+[2024-07-30T12:38:44.669Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:38:44.671Z] error: TypeError: servicesGroup[Object.keys(...)[0]].map is not a function
+[2024-07-30T12:38:45.524Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:38:45.524Z] error: TypeError: servicesGroup[Object.keys(...)[0]].map is not a function
+[2024-07-30T12:38:45.727Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:38:45.728Z] error: TypeError: servicesGroup[Object.keys(...)[0]].map is not a function
+[2024-07-30T12:38:52.861Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:38:52.862Z] error: TypeError: servicesGroup[Object.keys(...)[0]].map is not a function
+[2024-07-30T12:39:00.804Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:39:00.805Z] error: TypeError: servicesGroup[Object.keys(...)[0]].map is not a function
+[2024-07-30T12:39:01.295Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:39:01.296Z] error: TypeError: servicesGroup[Object.keys(...)[0]].map is not a function
+[2024-07-30T12:40:27.275Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:40:27.471Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:40:27.472Z] error: TypeError: servicesGroup[Object.keys(...)[0]].map is not a function
+[2024-07-30T12:40:28.656Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:40:28.724Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:40:28.725Z] error: TypeError: servicesGroup[Object.keys(...)[0]].map is not a function
+[2024-07-30T12:40:28.763Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:40:28.791Z] error: Failed to load services.yaml, please check for errors
+[2024-07-30T12:40:28.792Z] error: TypeError: servicesGroup[Object.keys(...)[0]].map is not a function
+[2024-07-30T12:41:38.444Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:41:39.139Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:41:40.008Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:41:43.184Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:41:59.146Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:42:45.574Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:42:46.666Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:42:47.214Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:42:47.395Z] error: <dockerStatusService> Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T12:42:47.433Z] error: <dockerStatsService> Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T12:43:03.074Z] error: <dockerStatusService> Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T12:43:03.113Z] error: <dockerStatsService> Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T12:43:03.123Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED 127.0.0.1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 2375
+}
+[2024-07-30T12:43:44.799Z] error: <dockerStatusService> Error: connect ECONNREFUSED ::1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T12:43:44.845Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED ::1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '::1',
+  port: 2375
+}
+[2024-07-30T12:43:44.857Z] error: <dockerStatsService> Error: connect ECONNREFUSED ::1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T12:43:46.170Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED ::1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '::1',
+  port: 2375
+}
+[2024-07-30T12:43:46.595Z] error: <dockerStatsService> Error: connect ECONNREFUSED ::1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T12:43:46.605Z] error: <dockerStatusService> Error: connect ECONNREFUSED ::1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T12:43:46.667Z] error: <service-helpers> Error getting services from Docker server 'my-docker': Error: connect ECONNREFUSED ::1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '::1',
+  port: 2375
+}
+[2024-07-30T12:43:48.760Z] error: <dockerStatusService> Error: connect ECONNREFUSED ::1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T12:43:48.768Z] error: <dockerStatsService> Error: connect ECONNREFUSED ::1:2375
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2024-07-30T13:16:48.046Z] info: services.yaml was copied to the config folder

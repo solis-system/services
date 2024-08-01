@@ -1,10 +1,64 @@
-.PHONY: init_submodules up down
+# Nom des fichiers de configuration docker-compose
+COMPOSE_FILE=docker-compose.yml
+COMPOSE_FILE_DEV=dev.docker-compose.yml
 
-init_submodules:
-	@git submodule update --init --recursive  --remote
+# Détection de l'environnement
+ENV ?= prod
 
-run:
-	@echo "Running the application..."
+# Sélection du fichier de configuration en fonction de l'environnement
+ifeq ($(ENV),dev)
+    COMPOSE_FILES=$(COMPOSE_FILE) -f $(COMPOSE_FILE_DEV)
+else
+    COMPOSE_FILES=$(COMPOSE_FILE)
+endif
 
+# Commandes docker-compose
+DOCKER_COMPOSE = docker-compose -f $(COMPOSE_FILES)
+
+# Fonctions pour afficher l'utilisation du Makefile
+.PHONY: help
+help:
+	@echo "Usage: make [command] [ENV=prod|dev] [SERVICE=service_name]"
+	@echo ""
+	@echo "Commands:"
+	@echo "  up           Démarrer tous les conteneurs"
+	@echo "  down         Arrêter tous les conteneurs"
+	@echo "  restart      Redémarrer tous les conteneurs"
+	@echo "  start        Démarrer un conteneur spécifique"
+	@echo "  stop         Arrêter un conteneur spécifique"
+	@echo "  restart_one  Redémarrer un conteneur spécifique"
+	@echo "  ps           Lister les conteneurs"
+
+.PHONY: up
+up:
+	$(DOCKER_COMPOSE) up -d
+
+.PHONY: down
 down:
-	@echo "Stopping the application..."
+	$(DOCKER_COMPOSE) down
+
+.PHONY: restart
+restart: down up
+
+.PHONY: start
+start:
+	@if [ -z "$(SERVICE)" ]; then \
+		echo "Veuillez spécifier le service avec SERVICE=service_name"; \
+		exit 1; \
+	fi
+	$(DOCKER_COMPOSE) up -d $(SERVICE)
+
+.PHONY: stop
+stop:
+	@if [ -z "$(SERVICE)" ]; then \
+		echo "Veuillez spécifier le service avec SERVICE=service_name"; \
+		exit 1; \
+	fi
+	$(DOCKER_COMPOSE) stop $(SERVICE)
+
+.PHONY: restart_one
+restart_one: stop start
+
+.PHONY: ps
+ps:
+	$(DOCKER_COMPOSE) ps

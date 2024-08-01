@@ -1,0 +1,26 @@
+- Autres:
+  - homepage:
+      href: http://homepage.localhost
+  - solisws_api:
+      href: http://api.localhost
+  - solisws_pwa:
+      href: http://solisws_pwa.localhost
+  - lolafrance_api:
+      href: http://beta.api.localhost
+  - lolafrance_pwa:
+      href: http://beta.localhost
+  - mailpit:
+      href: http://mailpit.localhost
+  - registry:
+      href: http://registry.localhost
+  - registry-ui:
+      href: http://registry.localhost
+  - pma:
+      href: http://pma.localhost
+  - n8n:
+      href: http://n8n.localhost
+  - uptime:
+      href: http://uptime.localhost
+- windev:
+  - webdev-a:
+      href: http://ws-a.localhost

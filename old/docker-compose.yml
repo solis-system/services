@@ -1,0 +1,259 @@
+services:
+  caddy:
+    container_name: caddy
+    build:
+      context: ..
+      dockerfile: ../Dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./Caddyfile:/etc/caddy/Caddyfile
+#      - caddy-data:/data
+#      - caddy-config:/config
+#    environment:
+#      - CADDY_DOCKER_CADDYFILE_PATH=/etc/caddy/Caddyfile
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+      - "5000:5000"
+    restart: always
+    networks:
+      - proxy-network
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:0.9.2
+    container_name: homepage
+    volumes:
+      - ./config/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      caddy: "homepage.localhost"
+      caddy.reverse_proxy: "{{upstreams 3000}}"
+    ports:
+      - "3000:3000"
+    restart: always
+    networks:
+      - proxy-network
+
+  hfsql:
+    container_name: hfsql
+    image: windev/hfsql:FR280085e
+    volumes:
+      - hfsql-data:/var/lib/hfsql
+    environment:
+      - HFSQL_RANDOM_PASSWORD=yes
+      - HFSQL_USER=admin
+    ports:
+      - 4900:4900
+    restart: always
+    networks:
+      - proxy-network
+
+  solisws_api:
+    container_name: solisws_api
+    image: ${REGISTRY_URL}/api:latest
+    labels:
+      caddy: "api.${DOMAIN}"
+      caddy.reverse_proxy: "{{upstreams 8000}}"
+    restart: always
+    networks:
+      - proxy-network
+
+  solisws_pwa:
+    container_name: solisws_pwa
+    image: ${REGISTRY_URL}/app:latest
+    labels:
+      caddy: "${DOMAIN}, *.${DOMAIN}"
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    restart: always
+    networks:
+      - proxy-network
+
+  lolafrance_api:
+    container_name: lolafrance_api
+    image: ${REGISTRY_URL}/api:latest
+    labels:
+      caddy: "beta.api.${DOMAIN}"
+      caddy.reverse_proxy: "{{upstreams 8000}}"
+    restart: always
+    networks:
+      - proxy-network
+
+  lolafrance_pwa:
+    container_name: lolafrance_pwa
+    image: ${REGISTRY_URL}/app:latest
+    labels:
+      caddy: "beta.${DOMAIN}, beta.*.${DOMAIN}"
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    restart: always
+    networks:
+      - proxy-network
+
+  redis:
+    container_name: redis
+    image: redis/redis-stack
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - proxy-network
+
+  mailpit:
+    container_name: mailpit
+    image: axllent/mailpit
+    labels:
+      caddy: "mailpit.${DOMAIN}"
+      caddy.reverse_proxy: "mailpit:8025"
+      homepage.group: Media
+      homepage.name: Emby
+#      homepage.icon: emby.png
+      homepage.href: http://emby.home/
+      homepage.description: Media server
+#      1025
+    environment:
+      TZ: Europe/Paris
+    volumes:
+      - mailpit-data:/data
+    restart: always
+    networks:
+      - proxy-network
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb:11.0.2
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    environment:
+     - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+     - MARIADB_USER=${MARIADB_USER}
+     - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    restart: always
+    networks:
+      - proxy-network
+
+  minio:
+    container_name: minio
+    image: quay.io/minio/minio
+#    labels:
+#      caddy: "minio.${DOMAIN}"
+#      caddy.reverse_proxy: "{{upstreams 9090}}"
+#      caddy.9000: "minio.${DOMAIN}:9000"
+#      caddy.9000.reverse_proxy: "{{upstreams 9000}}"
+    volumes:
+      - minio-data:/data
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    restart: always
+    networks:
+      - proxy-network
+    command: server /data --console-address :9090
+
+  registry:
+    container_name: registry
+    image: registry:latest
+    labels:
+      caddy: "registry.${DOMAIN}:5000"
+      caddy.reverse_proxy: "{{upstreams 5000}}"
+      caddy.basic_auth: "${BASIC_AUTH}"
+    volumes:
+      - registry-data:/var/lib/registry
+    restart: always
+    networks:
+      - proxy-network
+
+  registry-ui:
+    container_name: registry_ui
+    image: joxit/docker-registry-ui:latest
+    labels:
+      caddy: "registry.${DOMAIN}"
+      caddy.reverse_proxy: "registry-ui:80"
+#      caddy.basic_auth: "${BASIC_AUTH}"
+    environment:
+      REGISTRY_TITLE: "Solis Registry"
+      NGINX_PROXY_PASS_URL: "http://registry:5000"
+      DELETE_IMAGES: true
+      SINGLE_REGISTRY: true
+#    depends_on:
+#      - registry
+    restart: always
+    networks:
+      - proxy-network
+
+  webdev-a:
+    container_name: webdev-a
+    image: windev/webdev:FR280094s
+    labels:
+      caddy: "ws-a.${DOMAIN}"
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    volumes:
+      - webdev-a-data:/var/lib/WEBDEV/28.0/
+    environment:
+      - NUMERO_DE_SERIE=${NUMERO_DE_SERIE}
+      - CLE_D_ACTIVATION=${CLE_D_ACTIVATION}
+      - TZ=Europe/Paris
+    restart: always
+    networks:
+      - proxy-network
+    command: "--configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}"
+
+  pma:
+    container_name: pma
+    image: phpmyadmin:5.2.1-apache
+    labels:
+      homepage.group: Docker
+      homepage.name: pma
+      homepage.href: https://pma.localhost
+      homepage.description: PHP My admin
+      caddy: "pma.${DOMAIN}"
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    depends_on:
+      - mariadb
+    restart: always
+    networks:
+      - proxy-network
+  n8n:
+    container_name: n8n
+    image: n8nio/n8n:latest
+    labels:
+      caddy: "n8n.${DOMAIN}"
+      caddy.reverse_proxy: "{{upstreams 5678}}"
+    volumes:
+      - n8n-data:/home/node/.n8n
+    restart: always
+    networks:
+      - proxy-network
+
+  uptime:
+    container_name: uptime
+    image: louislam/uptime-kuma:1.23.8
+    labels:
+      caddy: "uptime.${DOMAIN}"
+      caddy.reverse_proxy: "uptime:3001"
+    volumes:
+      - uptime-kuma:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    networks:
+      - proxy-network
+
+volumes:
+  hfsql-data:
+    external: true
+  mariadb-data:
+    external: true
+  minio-data:
+    external: true
+  registry-data:
+    external: true
+  webdev-a-data:
+  mailpit-data:
+  n8n-data:
+  uptime-kuma:
+  redis_data:
+  caddy-data:
+  caddy-config:
+
+networks:
+  proxy-network:
+    external: true

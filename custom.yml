@@ -1,0 +1,151 @@
+caddy_base_config: |
+  {
+      email contact@solis-system.com
+      log {
+        output stdout
+        format console
+      }
+  }
+
+services:
+  caddy:
+    image: caddy:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+      - "5000:5000"
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:0.9.2
+    volumes:
+      - ./config/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    reverse_proxy:
+      subdomain: homepage
+      port: 3000
+
+  hfsql:
+    group: windev
+    image: windev/hfsql:FR280085e
+    storage:
+    volumes:
+      - hfsql-data:/var/lib/hfsql
+    environment:
+      - HFSQL_RANDOM_PASSWORD
+      - HFSQL_USER
+    ports:
+      - 4900:4900
+
+  solisws_api:
+    image: ${REGISTRY_URL}/api:latest
+    reverse_proxy:
+      subdomain: api
+      port: 8000
+
+  solisws_pwa:
+    image: ${REGISTRY_URL}/app:latest
+    reverse_proxy:
+
+  lolafrance_api:
+    image: ${REGISTRY_URL}/api:latest
+    reverse_proxy:
+      subdomain: beta.api
+      port: 8000
+
+  lolafrance_pwa:
+    image: ${REGISTRY_URL}/app:latest
+    reverse_proxy:
+      subdomain: beta
+      port: 80
+
+  redis:
+    image: redis/redis-stack
+    volumes:
+      - redis_data:/data
+
+  mailpit:
+    image: axllent/mailpit
+    reverse_proxy:
+      subdomain: mailpit
+      port: 8025
+    environment:
+      - TZ=Europe/Paris
+    volumes:
+      - mailpit_data:/data
+
+  mariadb:
+    image: mariadb:11.0.2
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    environment:
+      - MARIADB_PASSWORD
+      - MARIADB_USER
+      - MARIADB_ROOT_PASSWORD
+
+  minio:
+    image: quay.io/minio/minio
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
+    command: server /data --console-address :9090
+
+  registry:
+    image: registry:latest
+    reverse_proxy:
+      subdomain: registry
+    environment:
+      - BASIC_AUTH
+    volumes:
+      - registry_data:/var/lib/registry
+
+  registry-ui:
+    image: joxit/docker-registry-ui:latest
+    reverse_proxy:
+      subdomain: registry
+    environment:
+      - REGISTRY_TITLE
+      - NGINX_PROXY_PASS_URL
+      - DELETE_IMAGES
+      - SINGLE_REGISTRY
+
+  webdev-a:
+    group: windev
+    image: windev/webdev:FR280094s
+    reverse_proxy:
+      subdomain: ws-a
+    volumes:
+      - webdev-a_data:/var/lib/WEBDEV/28.0/
+    environment:
+      - NUMERO_DE_SERIE
+      - CLE_D_ACTIVATION
+      - TZ
+    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
+
+  pma:
+    image: phpmyadmin:5.2.1-apache
+    reverse_proxy:
+      subdomain: pma
+    depends_on:
+      - mariadb
+
+  n8n:
+    image: n8nio/n8n:latest
+    reverse_proxy:
+      subdomain: n8n
+      port: 5678
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  uptime:
+    image: louislam/uptime-kuma:1.23.8
+    reverse_proxy:
+      subdomain: uptime
+      port: 3001
+    volumes:
+      - uptime_data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock

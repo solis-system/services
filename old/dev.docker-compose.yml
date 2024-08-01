@@ -1,0 +1,10 @@
+services:
+  lolafrance_api:
+    volumes:
+      - ../backend_lolapp:/app
+
+  lolafrance_pwa:
+    volumes:
+      - ../lolapp:/app
+
+
