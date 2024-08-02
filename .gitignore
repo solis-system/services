@@ -1,4 +1,5 @@
 .env
 .idea
 docker-compose.yml
+dev.docker-compose.yml
 Caddyfile

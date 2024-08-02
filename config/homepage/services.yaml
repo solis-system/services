@@ -6,20 +6,8 @@
       description: Bakend API Laravel
       icon: mdi-api
   - Solisws PWA:
-      href: http://solisws_pwa.localhost
+      href: http://master-*.localhost
       container: solisws_pwa
-      showStats: true
-      description: VueJS application
-      icon: mdi-application-outline
-  - LolaFrance API:
-      href: http://beta.api.localhost
-      container: lolafrance_api
-      showStats: true
-      description: Backend API Laravel
-      icon: mdi-api
-  - LolaFrance PWA:
-      href: http://beta.localhost
-      container: lolafrance_pwa
       showStats: true
       description: VueJS application
       icon: mdi-application-outline
@@ -66,13 +54,7 @@
       showStats: true
       description: Monitoring service
       icon: mdi-radar
-- Services:
-  - Caddy:
-      href: '#'
-      container: caddy
-      showStats: true
-      description: Reverse Proxy
-      icon: mdi-arrow-decision
+- Data:
   - Minio:
       href: http://minio.localhost
       container: minio
@@ -80,25 +62,25 @@
       description: S3 Storage
       icon: mdi-nas
   - Docker Registry:
-      href: '#'
+      href: http://localhost
       container: registry
       showStats: true
       description: Stockage d'image docker private
       icon: mdi-docker
   - Redis:
-      href: '#'
+      href: http://localhost
       container: redis
       showStats: true
       description: Cache
       icon: mdi-database-cog-outline
   - Mysql:
-      href: '#'
+      href: http://localhost
       container: mariadb
       showStats: true
       description: Base de donnes
       icon: mdi-database
   - HSQL:
-      href: '#'
+      href: http://localhost
       container: hfsql
       showStats: true
       description: Base de donnes

@@ -1,17 +1,5 @@
-COMPOSE_FILE=docker-compose.yml
-COMPOSE_FILE_DEV=dev.docker-compose.yml
-
-ENV ?= prod
-
-ifeq ($(ENV),dev)
-    COMPOSE_FILES=$(COMPOSE_FILE) -f $(COMPOSE_FILE_DEV)
-else
-    COMPOSE_FILES=$(COMPOSE_FILE)
-endif
-
-DOCKER_COMPOSE = docker-compose -f $(COMPOSE_FILES)
+DOCKER_COMPOSE = docker-compose -f proxy.docker-compose.yml -f docker-compose.yml
 GENERATE_CONFIG = python3 generate_configs.py
-
 
 .PHONY: generate_configs
 generate_configs:

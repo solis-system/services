@@ -6,16 +6,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DOMAIN = os.getenv('DOMAIN')
+ENV = os.getenv('ENV', 'production')
 NETWORK_NAME = 'proxy-network'
-HOMEPAGE_SERVICE_PATH='config/homepage/services.yaml'
-ENTRYPOINT_YML_PATH='custom.yml'
+HOMEPAGE_SERVICE_PATH = 'config/homepage/services.yaml'
+ENTRYPOINT_YML_PATH = 'custom.yml'
 
 if DOMAIN is None:
     raise RuntimeError("The DOMAIN environment variable is not set.")
 
 SERVICE_KEYS = {
     'required': {'image'},
-    'optional': {'title', 'description', 'icon', 'environment', 'volumes', 'labels', 'reverse_proxy', 'ports', 'command', 'depends_on', 'storage'}
+    'optional': {'title', 'description', 'icon', 'environment', 'volumes', 'labels', 'subdomain', 'internal_port', 'ports', 'command', 'depends_on', 'storage', 'dev_path'}
 }
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -66,13 +67,10 @@ class ConfigGenerator:
         except IOError as exc:
             logging.error(f"Error writing file: {filepath}\n{exc}")
 
-    def _get_reverse_proxy_details(self, reverse_proxy, service_name):
-        subdomain = service_name
-        port = 80
-        if isinstance(reverse_proxy, dict):
-            subdomain = reverse_proxy.get('subdomain', subdomain)
-            port = reverse_proxy.get('port', port)
-        return subdomain, port
+    def _get_reverse_proxy_details(self, service):
+        subdomain = service.get('subdomain', '')
+        internal_port = service.get('internal_port', 80)
+        return subdomain, internal_port
 
     def generate_docker_compose(self):
         for group_name, services in self.yml_data.get('services', {}).items():
@@ -110,6 +108,10 @@ class ConfigGenerator:
                         self.docker_compose['volumes'][volume_name] = {'external': True}
                     compose_service_item['volumes'] = compose_service_item.get('volumes', []) + [f"{volume_name}:/data"]
 
+                # Add dev_path if ENV is 'development'
+                if ENV == 'development' and 'dev_path' in service:
+                    compose_service_item['volumes'] = compose_service_item.get('volumes', []) + [f"{service['dev_path']}:/app"]
+
                 self.docker_compose['services'][service_name] = compose_service_item
 
                 # Check for extra keys
@@ -127,15 +129,13 @@ class ConfigGenerator:
 
         for group_name, services in self.yml_data.get('services', {}).items():
             for service_name, service in services.items():
-                if 'reverse_proxy' in service:
-                    reverse_proxy = service['reverse_proxy']
-                    subdomain, port = self._get_reverse_proxy_details(reverse_proxy, service_name)
-                    if subdomain:
-                        lines.append(f"{subdomain}.{DOMAIN} {{")
-                    else:
-                        lines.append(f"{DOMAIN} {{")
-                    lines.append(f"    reverse_proxy {service_name}:{port}")
-                    lines.append("}")
+                subdomain, internal_port = self._get_reverse_proxy_details(service)
+                if subdomain:
+                    lines.append(f"{subdomain}.{DOMAIN} {{")
+                else:
+                    lines.append(f"{DOMAIN} {{")
+                lines.append(f"    reverse_proxy {service_name}:{internal_port}")
+                lines.append("}")
 
         return "\n".join(lines)
 
@@ -143,12 +143,8 @@ class ConfigGenerator:
         services_dict = {}
         for group_name, services in self.yml_data.get('services', {}).items():
             for service_name, service in services.items():
-                if 'reverse_proxy' in service:
-                    reverse_proxy = service['reverse_proxy']
-                    subdomain, _ = self._get_reverse_proxy_details(reverse_proxy, service_name)
-                    href = f"http://{subdomain}.{DOMAIN}" if subdomain else f"http://{DOMAIN}"
-                else:
-                    href = "#"
+                subdomain, _ = self._get_reverse_proxy_details(service)
+                href = f"http://{subdomain}.{DOMAIN}" if subdomain else f"http://{DOMAIN}"
 
                 if group_name not in services_dict:
                     services_dict[group_name] = []
