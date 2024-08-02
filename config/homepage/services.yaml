@@ -1,13 +1,13 @@
 - Lolapp:
   - Solisws API:
       href: http://api.localhost
-      container: solisws_api
+      container: api
       showStats: true
       description: Bakend API Laravel
       icon: mdi-api
   - Solisws PWA:
-      href: http://master-*.localhost
-      container: solisws_pwa
+      href: http://*.localhost
+      container: pwa
       showStats: true
       description: VueJS application
       icon: mdi-application-outline

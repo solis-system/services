@@ -7,30 +7,38 @@ caddy_base_config: |
       }
   }
 
-services:
-  Lolapp:
-    solisws_api:
-      title: "Solisws API"
-      description: "Bakend API Laravel"
-      icon: mdi-api
-      image: ${REGISTRY_URL}/api:latest
-      dev_path: ../backend_lolapp
-      subdomain: api
-      internal_port: 8000
+groups:
+  1: Lolapp
+  2: Outils
+  3: Data
 
-    solisws_pwa:
-      title: "Solisws PWA"
-      description: "VueJS application"
-      icon: mdi-application-outline
-      image: ${REGISTRY_URL}/app:latest
-      subdomain: "master-*"
-#    lolafrance_api:
-#      title: "LolaFrance API"
-#      description: "Backend API Laravel"
-#      icon: mdi-api
-#      image: ${REGISTRY_URL}/api:latest
-#      subdomain: beta.api
-#      internal_port: 8000
+
+services:
+  api:
+    group: 1
+    title: "Solisws API"
+    description: "Bakend API Laravel"
+    icon: mdi-api
+    image: ${REGISTRY_URL}/api:latest
+    dev_path: ../backend_lolapp
+    subdomain: api
+    internal_port: 8000
+
+  pwa:
+    group: 1
+    title: "Solisws PWA"
+    description: "VueJS application"
+    icon: mdi-application-outline
+    image: ${REGISTRY_URL}/app:latest
+    subdomain: "*"
+
+#  lolafrance_api:
+#    title: "LolaFrance API"
+#    description: "Backend API Laravel"
+#    icon: mdi-api
+#    image: ${REGISTRY_URL}/api:latest
+#    subdomain: beta.api
+#    internal_port: 8000
 #
 #    lolafrance_pwa:
 #      title: "LolaFrance PWA"
@@ -40,145 +48,160 @@ services:
 #      subdomain: "*.beta"
 #      internal_port: 80
 
-    webdev-a:
-      title: "Serveur Application"
-      description: "Webdev 28"
-      icon: mdi-server-minus
-      image: windev/webdev:FR280094s
-      subdomain: ws-a
-      storage: internal
-      volumes:
-        - webdev-a_data:/var/lib/WEBDEV/28.0/
-      environment:
-        - NUMERO_DE_SERIE
-        - CLE_D_ACTIVATION
-        - TZ
-      command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
-  Outils:
-    homepage:
-      title: "Home"
-      description: ""
-      icon: mdi-home-account
-      image: ghcr.io/gethomepage/homepage
-      subdomain:
-      internal_port: 3000
-      volumes:
-        - ./config/homepage:/app/config
-        - /var/run/docker.sock:/var/run/docker.sock
+  webdev-a:
+    group: 1
+    title: "Serveur Application"
+    description: "Webdev 28"
+    icon: mdi-server-minus
+    image: windev/webdev:FR280094s
+    subdomain: ws-a
+    storage: internal
+    volumes:
+      - webdev-a_data:/var/lib/WEBDEV/28.0/
+    environment:
+      - NUMERO_DE_SERIE
+      - CLE_D_ACTIVATION
+      - TZ
+    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
 
-    mailpit:
-      title: "Mailpit"
-      description: "Serveur mail de test"
-      icon: mdi-email-outline
-      image: axllent/mailpit
-      subdomain: mailpit
-      internal_port: 8025
-      environment:
-        - TZ
-      storage: internal
-      volumes:
-        - mailpit_data:/data
+  homepage:
+    group: 2
+    title: "Home"
+    description: ""
+    icon: mdi-home-account
+    image: ghcr.io/gethomepage/homepage
+    subdomain:
+    internal_port: 3000
+    volumes:
+      - ./config/homepage:/app/config
+      - ./dist/homepage/homepage_services.yaml:/app/config/services.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
 
-    registry-ui:
-      title: "Registry UI"
-      description: "Interface web image docker"
-      icon: mdi-image
-      image: joxit/docker-registry-ui:latest
-      subdomain: registry
-      environment:
-        - REGISTRY_TITLE
-        - NGINX_PROXY_PASS_URL
-        - DELETE_IMAGES
-        - SINGLE_REGISTRY
-    pma:
-      image: phpmyadmin:5.2.1-apache
-      title: "PHPMyAdmin"
-      description: "SQL Viewer"
-      icon: mdi-database-search
-      subdomain: pma
-      depends_on:
-        - mariadb
-    n8n:
-      image: n8nio/n8n:latest
-      title: "n8n"
-      description: "Automatisation Workflow"
-      icon: mdi-home-automation
-      subdomain: n8n
-      internal_port: 5678
-      storage: internal
-      volumes:
-        - n8n_data:/home/node/.n8n
-    uptime:
-      image: louislam/uptime-kuma:1.23.8
-      title: "Uptime Kuma"
-      description: "Monitoring service"
-      icon: mdi-radar
-      subdomain: uptime
-      internal_port: 3001
-      storage: internal
-      volumes:
-        - uptime_data:/app/data
-        - /var/run/docker.sock:/var/run/docker.sock
-  Data:
-    minio:
-      title: "Minio"
-      description: "S3 Storage"
-      icon: mdi-nas
-      image: quay.io/minio/minio
-      subdomain: minio
-      internal_port: 9090
-      storage:
-      volumes:
-        - minio_data:/data
-      environment:
-        - MINIO_ROOT_USER
-        - MINIO_ROOT_PASSWORD
-      command: server /data --console-address :9090
+  mailpit:
+    group: 2
+    title: "Mailpit"
+    description: "Serveur mail de test"
+    icon: mdi-email-outline
+    image: axllent/mailpit
+    subdomain: mailpit
+    internal_port: 8025
+    environment:
+      - TZ
+    storage: internal
+    volumes:
+      - mailpit_data:/data
 
-    registry:
-      title: "Docker Registry"
-      description: "Stockage d'image docker private"
-      icon: mdi-docker
-      image: registry:latest
-      storage: external
-      environment:
-        - BASIC_AUTH
-      volumes:
-        - registry_data:/var/lib/registry
+  registry-ui:
+    group: 2
+    title: "Registry UI"
+    description: "Interface web image docker"
+    icon: mdi-image
+    image: joxit/docker-registry-ui:latest
+    subdomain: registry
+    environment:
+      - REGISTRY_TITLE
+      - NGINX_PROXY_PASS_URL
+      - DELETE_IMAGES
+      - SINGLE_REGISTRY
+  pma:
+    group: 2
+    title: "PHPMyAdmin"
+    description: "SQL Viewer"
+    icon: mdi-database-search
+    image: phpmyadmin:5.2.1-apache
+    subdomain: pma
+    depends_on:
+      - mariadb
 
-    redis:
-      title: "Redis"
-      description: "Cache"
-      icon: mdi-database-cog-outline
-      image: redis/redis-stack
-      storage: internal
-      volumes:
-        - redis_data:/data
+  n8n:
+    group: 2
+    image: n8nio/n8n:latest
+    title: "n8n"
+    description: "Automatisation Workflow"
+    icon: mdi-home-automation
+    subdomain: n8n
+    internal_port: 5678
+    storage: internal
+    volumes:
+      - n8n_data:/home/node/.n8n
 
-    mariadb:
-      title: "Mysql"
-      description: "Base de donnes"
-      icon: mdi-database
-      image: mariadb:11.0.2
-      storage:
-      volumes:
-        - mariadb_data:/var/lib/mysql
-      environment:
-        - MARIADB_PASSWORD
-        - MARIADB_USER
-        - MARIADB_ROOT_PASSWORD
+  uptime:
+    group: 2
+    image: louislam/uptime-kuma:1.23.8
+    title: "Uptime Kuma"
+    description: "Monitoring service"
+    icon: mdi-radar
+    subdomain: uptime
+    internal_port: 3001
+    storage: internal
+    volumes:
+      - uptime_data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
-    hfsql:
-      title: "HSQL"
-      description: "Base de donnes"
-      icon: mdi-database
-      image: windev/hfsql:FR280085e
-      storage: internal
-      volumes:
-        - hfsql_data:/var/lib/hfsql
-      environment:
-        - HFSQL_RANDOM_PASSWORD
-        - HFSQL_USER
-      ports:
-        - 4900:4900
+  minio:
+    group: 3
+    title: "Minio"
+    description: "S3 Storage"
+    icon: mdi-nas
+    image: quay.io/minio/minio
+    subdomain: minio
+    internal_port: 9090
+    storage: external
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
+    command: server /data --console-address :9090
+
+  registry:
+    group: 3
+    title: "Docker Registry"
+    description: "Stockage d'image docker private"
+    icon: mdi-docker
+    image: registry:latest
+    storage: external
+    environment:
+      - BASIC_AUTH
+    volumes:
+      - registry_data:/var/lib/registry
+
+  redis:
+    group: 3
+    title: "Redis"
+    description: "Cache"
+    icon: mdi-database-cog-outline
+    image: redis/redis-stack
+    storage: internal
+    volumes:
+      - redis_data:/data
+
+  mariadb:
+    group: 3
+    title: "Mysql"
+    description: "Base de donnes"
+    icon: mdi-database
+    image: mariadb:11.0.2
+    storage: external
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    environment:
+      - MARIADB_PASSWORD
+      - MARIADB_USER
+      - MARIADB_ROOT_PASSWORD
+
+  hfsql:
+    group: 3
+    title: "HSQL"
+    description: "Base de donnes"
+    icon: mdi-database
+    image: windev/hfsql:FR280085e
+    storage: internal
+    volumes:
+      - hfsql_data:/var/lib/hfsql
+    environment:
+      - HFSQL_RANDOM_PASSWORD
+      - HFSQL_USER
+    ports:
+      - 4900:4900
 
