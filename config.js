@@ -1,6 +1,6 @@
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 export default {
   DOMAIN: process.env.DOMAIN,
@@ -8,7 +8,7 @@ export default {
   BASIC_AUTH: process.env.BASIC_AUTH,
   ADMIN_EMAIL: 'admin@solis-system.com',
   NETWORK_NAME: 'proxy-network',
-  ENTRYPOINT_YML_PATH: 'custom.yml',
+  ENTRYPOINT_YML_PATH: 'manifest.yml',
   OUTPUT_DIR: 'dist',
   HOME_PAGE_GROUPS: {
     1: 'Lolapp',
@@ -35,4 +35,4 @@ export default {
       'auth',
     ],
   },
-};
+}
