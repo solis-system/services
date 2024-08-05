@@ -1,8 +1,9 @@
 DOCKER_COMPOSE = docker-compose -f dist/proxy.docker-compose.yml -f dist/docker-compose.yml
-GENERATE_CONFIG = python3 generate_configs.py
+#GENERATE_CONFIG = python3 generate.py
+GENERATE_CONFIG = pnpm start
 
-.PHONY: generate_configs
-generate_configs:
+.PHONY: generate
+generate:
 	$(GENERATE_CONFIG)
 
 .PHONY: help
@@ -19,18 +20,18 @@ help:
 	@echo "  ps           Lister les conteneurs"
 
 .PHONY: up
-up: generate_configs
+up: generate
 	$(DOCKER_COMPOSE) up -d
 
 .PHONY: down
-down: generate_configs
+down: generate
 	$(DOCKER_COMPOSE) down
 
 .PHONY: restart
-restart: generate_configs down up
+restart: generate down up
 
 .PHONY: start
-start: generate_configs
+start: generate
 	@if [ -z "$(SERVICE)" ]; then \
 		echo "Veuillez spécifier le service avec SERVICE=service_name"; \
 		exit 1; \
@@ -38,7 +39,7 @@ start: generate_configs
 	$(DOCKER_COMPOSE) up -d $(SERVICE)
 
 .PHONY: stop
-stop: generate_configs
+stop: generate
 	@if [ -z "$(SERVICE)" ]; then \
 		echo "Veuillez spécifier le service avec SERVICE=service_name"; \
 		exit 1; \
