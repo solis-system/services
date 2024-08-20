@@ -1,4 +1,4 @@
-DOCKER_COMPOSE = docker-compose -f dist/proxy.docker-compose.yml -f dist/docker-compose.yml
+DOCKER_COMPOSE = docker compose -f dist/proxy.docker-compose.yml -f dist/docker-compose.yml
 #GENERATE_CONFIG = python3 generate.py
 GENERATE_CONFIG = pnpm start
 
