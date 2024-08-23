@@ -160,6 +160,7 @@ class ConfigGenerator {
     const lines = []
 
     const caddy_config = template.caddy_header(
+      config.DOMAIN,
       config.ADMIN_EMAIL,
       config.BASIC_AUTH
     )

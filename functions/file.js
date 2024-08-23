@@ -41,6 +41,6 @@ export const removeDir = (directoryPath) => {
   try {
     fs.rmSync(directoryPath, { recursive: true, force: true })
   } catch (err) {
-    throw new Error(`Error remove dir ${error}`)
+    throw new Error(`Error remove dir ${err}`)
   }
 }
