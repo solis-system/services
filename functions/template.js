@@ -16,6 +16,7 @@ telescope.${domain} {
 
     @telescope {
         path /telescope*
+        path /vendor*
     }
     route @telescope {
         import auth
@@ -24,6 +25,7 @@ telescope.${domain} {
     }
     @telescope_root {
         not path /telescope*
+        not path /vendor*
     }
     redir @telescope_root /telescope
 }
