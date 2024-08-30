@@ -72,9 +72,16 @@ class ConfigGenerator {
       }
 
       if (service.environment) {
-        composeServiceItem.environment = service.environment.map(
-          (varName) => varName + '=' + '${' + varName + '}'
-        )
+        composeServiceItem.environment = Object.entries(service.environment).map(([key, value]) => {
+
+        if (value) {
+            // Si une valeur est définie dans manifest.yml, l'utiliser telle quelle
+            return `${key}=${value}`;
+          } else {
+            // Sinon, utiliser la syntaxe de remplacement via .env
+            return `${key}=${'${' + key + '}'}`;
+          }
+        });
       }
       if (service.volumes) {
         composeServiceItem.volumes = service.volumes

@@ -2,7 +2,7 @@ services:
   api:
     group: 1
     title: "Solisws API"
-    description: "Bakend API Laravel"
+    description: "Backend API Laravel"
     icon: mdi-api
     image: ${REGISTRY_URL}/api:latest
     dev_path: ../../backend_lolapp
@@ -44,10 +44,24 @@ services:
     subdomain:
     internal_port: 3000
     volumes:
-      - ../homepage:/app/config
+      - ../conf/homepage:/app/config
       - ./homepage_services.yaml:/app/config/services.yaml
       - /var/run/docker.sock:/var/run/docker.sock
 
+  watchtower:
+    group: 2
+    title: "Watchtower"
+    description: "Mise a jour automatique des images"
+    icon: mdi-radar
+    image: containrrr/watchtower
+    command: >
+      --interval 300
+      --notification-url mattermost://mattermost.solisws.fr/j88b7ik1zbnt58twb4hatjaa9o
+      --notification-template "({{.Level}})"
+      --notification-report
+    volumes:
+      - ~/.docker/config.json:/config.json
+      - /var/run/docker.sock:/var/run/docker.sock
   mailpit:
     group: 2
     title: "Mailpit"

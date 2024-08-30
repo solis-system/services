@@ -33,6 +33,7 @@ export default {
       'dev_path',
       'group',
       'auth',
+      'env'
     ],
   },
 }
