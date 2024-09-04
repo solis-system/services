@@ -1,9 +1,24 @@
-DOCKER_COMPOSE = docker compose -f dist/proxy.docker-compose.yml -f dist/docker-compose.yml
-#GENERATE_CONFIG = python3 generate.py
+ifneq (,$(wildcard .env))
+    include .env
+    export $(shell sed 's/=.*//' .env)
+endif
+ENV ?= production
+
+DOCKER_COMPOSE_FILES = -f dist/proxy.docker-compose.yml -f dist/docker-compose.yml
+ifeq ($(ENV),development)
+    DOCKER_COMPOSE_FILES += -f dist/docker-compose.dev.yml
+    BUILD_OPTION = --build
+else
+    BUILD_OPTION =
+endif
+
+DOCKER_COMPOSE = docker compose $(DOCKER_COMPOSE_FILES)
+
 GENERATE_CONFIG = pnpm start
 
 .PHONY: generate
 generate:
+	@echo "Generating configuration for environment: $(ENV)"
 	$(GENERATE_CONFIG)
 
 .PHONY: help
@@ -21,7 +36,7 @@ help:
 
 .PHONY: up
 up: generate
-	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_COMPOSE) up -d $(BUILD_OPTION)
 
 .PHONY: down
 down: generate
@@ -36,7 +51,7 @@ start: generate
 		echo "Veuillez spécifier le service avec SERVICE=service_name"; \
 		exit 1; \
 	fi
-	$(DOCKER_COMPOSE) up -d $(SERVICE)
+	$(DOCKER_COMPOSE) up -d $(BUILD_OPTION) $(SERVICE)
 
 .PHONY: stop
 stop: generate

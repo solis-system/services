@@ -12,6 +12,8 @@ class ConfigGenerator {
     this.ymlData = files.readYamlFile(ymlPath)
     if (!this.ymlData) logger.error('Error reading YAML file')
 
+    this.servicesObject = Object.entries(this.ymlData.services || {})
+
     files.removeDir(config.OUTPUT_DIR)
 
     // Copier le fichier .env dans le dossier de sortie
@@ -19,6 +21,9 @@ class ConfigGenerator {
 
     const dockerComposeYml = this.generateDockerCompose()
     files.writeFile(config.OUTPUT_DIR, 'docker-compose.yml', dockerComposeYml)
+
+    const devDockerComposeYml = this.generateDevDockerCompose()
+    files.writeFile(config.OUTPUT_DIR, 'docker-compose.dev.yml', devDockerComposeYml)
 
     // Générer Caddyfile
     const caddyfileContent = this.generateCaddyfile()
@@ -56,9 +61,7 @@ class ConfigGenerator {
       },
     }
 
-    for (const [serviceName, service] of Object.entries(
-      this.ymlData.services || {}
-    )) {
+    for (const [serviceName, service] of this.servicesObject) {
       if (!config.SERVICE_KEYS.required.every((key) => key in service)) {
         logger.warn(`Service definition incomplete: ${serviceName}`)
         continue
@@ -113,14 +116,6 @@ class ConfigGenerator {
         ]
       }
 
-      // Add dev_path if ENV is 'development'
-      if (config.ENV === 'development' && service.dev_path) {
-        composeServiceItem.volumes = [
-          ...(composeServiceItem.volumes || []),
-          `${service.dev_path}:/app`,
-        ]
-      }
-
       dockerCompose.services[serviceName] = composeServiceItem
 
       // Check for extra keys
@@ -136,6 +131,25 @@ class ConfigGenerator {
       }
     }
 
+    return files.yamlDump(dockerCompose)
+  }
+
+  generateDevDockerCompose() {
+    const dockerCompose = {
+      services: {},
+    }
+
+    for (const [serviceName, service] of this.servicesObject) {
+      if (!service.dev_path) continue
+      dockerCompose.services[serviceName] = {
+        container_name: serviceName,
+        build: {
+          context: service.dev_path,
+          dockerfile: 'Dockerfile-dev',
+        },
+        volumes: [`${service.dev_path}:/app`]
+      }
+    }
     return files.yamlDump(dockerCompose)
   }
 
@@ -173,9 +187,9 @@ class ConfigGenerator {
     )
     lines.push(caddy_config)
 
-    const servicesObject = Object.entries(this.ymlData.services || {})
 
-    for (const [serviceName, service] of servicesObject) {
+
+    for (const [serviceName, service] of this.servicesObject) {
       if (!('subdomain' in service)) continue
 
       const [subdomain, internalPort] = this._getReverseProxyDetails(service)
