@@ -14,7 +14,7 @@ endif
 
 DOCKER_COMPOSE = docker compose $(DOCKER_COMPOSE_FILES)
 
-GENERATE_CONFIG = pnpm start
+GENERATE_CONFIG = bun start
 
 .PHONY: generate
 generate:
@@ -36,7 +36,7 @@ help:
 
 .PHONY: up
 up: generate
-	$(DOCKER_COMPOSE) up -d $(BUILD_OPTION)
+	$(DOCKER_COMPOSE) up $(BUILD_OPTION)
 
 .PHONY: down
 down: generate

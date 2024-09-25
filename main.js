@@ -75,16 +75,9 @@ class ConfigGenerator {
       }
 
       if (service.environment) {
-        composeServiceItem.environment = Object.entries(service.environment).map(([key, value]) => {
-
-        if (value) {
-            // Si une valeur est définie dans manifest.yml, l'utiliser telle quelle
-            return `${key}=${value}`;
-          } else {
-            // Sinon, utiliser la syntaxe de remplacement via .env
-            return `${key}=${'${' + key + '}'}`;
-          }
-        });
+        composeServiceItem.environment = service.environment.map(
+          (varName) => varName + '=' + '${' + varName + '}'
+        )
       }
       if (service.volumes) {
         composeServiceItem.volumes = service.volumes
@@ -147,7 +140,8 @@ class ConfigGenerator {
           context: service.dev_path,
           dockerfile: 'Dockerfile-dev',
         },
-        volumes: [`${service.dev_path}:/app`]
+        volumes: [`${service.dev_path}:/app`],
+        ports: [`${service.internal_port}:${service.internal_port}`]
       }
     }
     return files.yamlDump(dockerCompose)

@@ -1,3 +1,9 @@
+# Prerequis
+
+make
+node
+pnpm
+
 # Getion Serveur Solis
 
 ## Submodules
