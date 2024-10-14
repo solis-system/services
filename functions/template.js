@@ -1,19 +1,20 @@
-export const caddy_header = (domain, email, basic_auth) =>
+export const caddy_header = (config) =>
   `{
-    email ${email}
+    email ${config.ADMIN_EMAIL}
     log {
         output stdout
         format console
     }
+    acme_dns cloudflare ${config.CLOUDFLARE_API_TOKEN}
 }
 
 (auth) {
     basic_auth {
-        admin ${basic_auth}
+        admin ${config.BASIC_AUTH}
     }
 }
 
-telescope.${domain} {
+telescope.${config.DOMAIN} {
 
     @telescope {
         path /telescope*
