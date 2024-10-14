@@ -153,7 +153,11 @@ class ConfigGenerator {
       services: {
         caddy: {
           container_name: 'caddy',
-          image: 'caddy:2.8.4',
+          build: {
+            context: '.',
+            dockerfile: 'Dockerfile-caddy',
+          },
+          // image: 'caddy:2.8.4',
           volumes: [
             '/var/run/docker.sock:/var/run/docker.sock',
             './Caddyfile:/etc/caddy/Caddyfile',
