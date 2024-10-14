@@ -14,7 +14,7 @@ services:
     title: "Solisws PWA"
     description: "VueJS application"
     icon: mdi-application-outline
-    image: ${REGISTRY_URL}/app:dev
+    image: ${REGISTRY_URL}/app:latest
     dev_path: ../../lolapp
     subdomain: "*"
     internal_port: 8085
