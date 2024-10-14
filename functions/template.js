@@ -8,11 +8,7 @@ export const caddy_header = (config) =>
     acme_dns cloudflare  ${config.CLOUDFLARE_API_TOKEN}
 }
 
-(auth) {
-    basic_auth {
-        admin ${config.BASIC_AUTH}
-    }
-}
+
 
 telescope.${config.DOMAIN} {
 
@@ -36,6 +32,11 @@ export const caddy_service = (url, proxy_service, basic_auth = false) =>
   `${url} {
     encode gzip
     reverse_proxy ${proxy_service}
-    ${basic_auth ? 'import auth' : ''}
 }`
+    // ${basic_auth ? 'import auth' : ''}
 
+// }
+    // (auth) {
+    // basic_auth {
+    //     admin ${config.BASIC_AUTH}
+    // }
