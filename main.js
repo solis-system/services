@@ -18,6 +18,7 @@ class ConfigGenerator {
 
     // Copier le fichier .env dans le dossier de sortie
     files.copyFile('.env', path.join(config.OUTPUT_DIR, '.env'))
+    files.copyFile('Dockerfile-caddy', path.join(config.OUTPUT_DIR, 'Dockerfile-caddy'))
 
     const dockerComposeYml = this.generateDockerCompose()
     files.writeFile(config.OUTPUT_DIR, 'docker-compose.yml', dockerComposeYml)
@@ -152,7 +153,10 @@ class ConfigGenerator {
       services: {
         caddy: {
           container_name: 'caddy',
-          image: 'caddy:latest',
+          build: {
+            context: '.',
+            dockerfile: 'Dockerfile-caddy',
+          },
           volumes: [
             '/var/run/docker.sock:/var/run/docker.sock',
             './Caddyfile:/etc/caddy/Caddyfile',
