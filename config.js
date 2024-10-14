@@ -6,7 +6,7 @@ export default {
   DOMAIN: process.env.DOMAIN,
   ENV: process.env.ENV || 'production',
   BASIC_AUTH: process.env.BASIC_AUTH,
-  ADMIN_EMAIL: 'webcontact@solis-system.com',
+  ADMIN_EMAIL: process.env.EMAIL,
   NETWORK_NAME: 'proxy-network',
   ENTRYPOINT_YML_PATH: 'manifest.yml',
   OUTPUT_DIR: 'dist',
