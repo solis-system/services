@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "idb": "^8.0.0",
     "js-yaml": "^4.1.0",
     "winston": "^3.13.1"
   },
