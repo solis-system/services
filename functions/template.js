@@ -1,15 +1,9 @@
-export const caddy_header = (config) =>
-  `{
+export const caddy_header = (config) => `
+{
     email ${config.ADMIN_EMAIL}
     log {
         output stdout
         format console
-    }
-}
-
-(auth) {
-    basic_auth {
-        admin ${config.BASIC_AUTH}
     }
 }
 
@@ -35,6 +29,11 @@ export const caddy_service = (url, proxy_service, basic_auth = false) =>
   `${url} {
     encode gzip
     reverse_proxy ${proxy_service}
-    ${basic_auth ? 'import auth' : ''}
 }`
 
+    // ${basic_auth ? 'import auth' : ''}
+//     (auth) {
+//     basic_auth {
+//         admin ${config.BASIC_AUTH}
+//     }
+// }
