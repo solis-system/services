@@ -5,9 +5,7 @@ export const caddy_header = (config) =>
         output stdout
         format console
     }
-    tls {
-        dns cloudflare  ${config.CLOUDFLARE_API_TOKEN}
-    }
+    acme_dns cloudflare  ${config.CLOUDFLARE_API_TOKEN}
 }
 
 (auth) {
