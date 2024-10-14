@@ -17,6 +17,15 @@ services:
     image: ${REGISTRY_URL}/app:dev
     dev_path: ../../lolapp
     subdomain: "*"
+    internal_port: 8085
+
+  nocodb:
+    group: 1
+    title: "NocoDB"
+    description: "Base de donnee"
+    icon: mdi-database-settings
+    image: nocodb/nocodb:latest
+    subdomain: nocodb
     internal_port: 8080
 
   webdev-a:
