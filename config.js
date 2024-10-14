@@ -7,7 +7,7 @@ export default {
   ENV: process.env.ENV || 'production',
   BASIC_AUTH: process.env.BASIC_AUTH,
   CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN,
-  ADMIN_EMAIL: 'admin@solis-system.com',
+  ADMIN_EMAIL: 'webcontact@solis-system.com',
   NETWORK_NAME: 'proxy-network',
   ENTRYPOINT_YML_PATH: 'manifest.yml',
   OUTPUT_DIR: 'dist',
