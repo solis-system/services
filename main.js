@@ -175,13 +175,8 @@ class ConfigGenerator {
   generateCaddyfile() {
     const lines = []
 
-    const caddy_config = template.caddy_header(
-      config.DOMAIN,
-      config.ADMIN_EMAIL,
-      config.BASIC_AUTH
-    )
+    const caddy_config = template.caddy_header(config)
     lines.push(caddy_config)
-
 
 
     for (const [serviceName, service] of this.servicesObject) {
