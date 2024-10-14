@@ -189,7 +189,8 @@ class ConfigGenerator {
       const caddy_service = template.caddy_service(
         url,
         proxy_service,
-        basic_auth
+        basic_auth,
+        config
       )
       lines.push(caddy_service)
     }
