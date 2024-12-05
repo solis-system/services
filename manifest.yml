@@ -31,18 +31,18 @@ services:
   webdev-a:
     group: 1
     title: "Serveur Application"
-    description: "Webdev 28"
+    description: "Webdev 2025"
     icon: mdi-server-minus
-    image: windev/webdev:FR280094s
+    image: windev/webdev:300012k
     subdomain: ws-a
     storage: internal
     volumes:
-      - webdev-a_data:/var/lib/WEBDEV/28.0/
+      - webdev-a_data:/var/lib/WEBDEV/30.0/
     environment:
       - NUMERO_DE_SERIE
       - CLE_D_ACTIVATION
       - TZ
-    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
+        # command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
 
   homepage:
     group: 2
