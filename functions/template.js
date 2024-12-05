@@ -25,7 +25,10 @@ telescope.${config.DOMAIN} {
     redir @telescope_root /telescope
 }
 
-api-minio.solisws.fr {
+
+`
+export const caddy_footer = (config) => `
+api-minio.${config.DOMAIN} {
     reverse_proxy minio:9000 {
             header_up Host {host}
             header_up X-Real-IP {remote}
@@ -34,6 +37,7 @@ api-minio.solisws.fr {
     encode gzip
 }
 `
+
 export const caddy_service = (url, proxy_service, basic_auth = false, config) =>
   `${url} {
     encode gzip
