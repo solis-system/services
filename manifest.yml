@@ -42,7 +42,7 @@ services:
       - NUMERO_DE_SERIE
       - CLE_D_ACTIVATION
       - TZ
-        # command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
+    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
 
   homepage:
     group: 2
@@ -54,7 +54,7 @@ services:
     internal_port: 3000
     volumes:
       - ../conf/homepage:/app/config
-      - ./homepage_services.yaml:/app/config/services.yaml
+      - ./homepage_services.yaml:/conf/homepage/services.yaml
       - /var/run/docker.sock:/var/run/docker.sock
 
   watchtower:
@@ -186,6 +186,8 @@ services:
       - MARIADB_PASSWORD
       - MARIADB_USER
       - MARIADB_ROOT_PASSWORD
+    ports:
+      - 3306:3306
 
   hfsql:
     group: 3

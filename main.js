@@ -199,8 +199,8 @@ class ConfigGenerator {
       lines.push(caddy_service)
     }
 
-    const caddy_footer = template.caddy_footer(config)
-    lines.push(caddy_footer)
+    // const caddy_footer = template.caddy_footer(config)
+    // lines.push(caddy_footer)
 
     return lines.join('\n')
   }
