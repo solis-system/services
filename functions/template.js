@@ -7,6 +7,11 @@ export const caddy_header = (config) => `
     }
 }
 
+jscanify.${config.DOMAIN} {
+    reverse_proxy lola-france.fr:5173
+    encode gzip
+}
+
 telescope.${config.DOMAIN} {
 
     @telescope {
