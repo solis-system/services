@@ -205,7 +205,7 @@ services:
     title: "HSQL"
     description: "Base de donnes"
     icon: mdi-database
-    image: windev/hfsql:FR280085e
+    image: windev/hfsql:290089
     storage: internal
     volumes:
       - hfsql_data:/var/lib/hfsql
