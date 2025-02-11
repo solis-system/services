@@ -13,7 +13,7 @@ jscanify.${config.DOMAIN} {
 }
 
 beta.${config.DOMAIN} {
-    reverse_proxy localhost:8090
+    reverse_proxy http://localhost:4173
     encode gzip
 }
 
