@@ -205,12 +205,12 @@ services:
     title: "HSQL"
     description: "Base de donnes"
     icon: mdi-database
-    image: windev/hfsql:290089
-    storage: internal
+    image: windev/hfsql:300044c
+    storage: external
     volumes:
       - hfsql_data:/var/lib/hfsql
     environment:
-      - HFSQL_RANDOM_PASSWORD
+      - HFSQL_ALLOW_EMPTY_PASSWORD
       - HFSQL_USER
     ports:
       - 4900:4900

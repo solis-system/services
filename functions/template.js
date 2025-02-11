@@ -12,6 +12,11 @@ jscanify.${config.DOMAIN} {
     encode gzip
 }
 
+beta.${config.DOMAIN} {
+    reverse_proxy localhost:8090
+    encode gzip
+}
+
 telescope.${config.DOMAIN} {
 
     @telescope {
