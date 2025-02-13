@@ -15,6 +15,9 @@ jscanify.${config.DOMAIN} {
 beta.${config.DOMAIN}, *.beta.${config.DOMAIN} {
     reverse_proxy http://lola-france.fr:4173
     encode gzip
+    tls {
+      dns cloudflare YGKXaAPIvy5hK00lQ58hUrtC2ixYaMJO6a0OTiKd
+    }
 }
 
 telescope.${config.DOMAIN} {
