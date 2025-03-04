@@ -20,6 +20,14 @@ beta.${config.DOMAIN}, *.beta.${config.DOMAIN} {
     }
 }
 
+ws-a.${config.DOMAIN} {
+    reverse_proxy http://lola-france.fr:8079
+    encode gzip
+        tls {
+      dns cloudflare YGKXaAPIvy5hK00lQ58hUrtC2ixYaMJO6a0OTiKd
+    }
+}
+
 telescope.${config.DOMAIN} {
 
     @telescope {
