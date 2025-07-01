@@ -19,16 +19,16 @@ services:
     subdomain: "*"
     internal_port: 8085
 
-  openwebui:
-    group: 1
-    title: "OpenWebUI"
-    description: "Interface web"
-    icon: mdi-web
-    image: ghcr.io/open-webui/open-webui:main
+      #  openwebui:
+      #group: 1
+      #title: "OpenWebUI"
+      #description: "Interface web"
+      #icon: mdi-web
+      #image: ghcr.io/open-webui/open-webui:main
 #    volumes:
 #      - open-webui_data:/app/backend/data
-    subdomain: chat
-    internal_port: 8080
+#subdomain: chat
+#internal_port: 8080
 
   nocodb:
     group: 1
@@ -39,21 +39,21 @@ services:
     subdomain: nocodb
     internal_port: 8080
 
-#  webdev-a:
-#    group: 1
-#    title: "Serveur Application"
-#    description: "Webdev 2025"
-#    icon: mdi-server-minus
-#    image: windev/webdev:301022
-#    subdomain: ws-a
-#    storage: internal
-#    volumes:
-#      - webdev-a_data:/var/lib/WEBDEV/30.0/
-#    environment:
-#      - NUMERO_DE_SERIE
-#      - CLE_D_ACTIVATION
-#      - TZ
-#    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
+  webdev-a:
+    group: 1
+    title: "Serveur Application"
+    description: "Webdev 2025"
+    icon: mdi-server-minus
+    image: webdev-a
+    subdomain: ws-a
+    storage: internal
+      #    volumes:
+      # - webdev-a_data:/var/lib/WEBDEV/30.0/
+    environment:
+      - NUMERO_DE_SERIE
+      - CLE_D_ACTIVATION
+      - TZ
+    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
 
   homepage:
     group: 2
@@ -205,12 +205,12 @@ services:
     title: "HSQL"
     description: "Base de donnes"
     icon: mdi-database
-    image: windev/hfsql:300044c
+    image: windev/hfsql:303036
     storage: external
     volumes:
       - hfsql_data:/var/lib/hfsql
     environment:
-      - HFSQL_ALLOW_EMPTY_PASSWORD
+      - HFSQL_RANDOM_PASSWORD
       - HFSQL_USER
     ports:
       - 4900:4900
