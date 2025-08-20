@@ -162,7 +162,7 @@ class ConfigGenerator {
             '/var/run/docker.sock:/var/run/docker.sock',
             './Caddyfile:/etc/caddy/Caddyfile',
           ],
-          ports: ['80:80', '443:443', '443:443/udp', '5000:5000'],
+          ports: ['80:80', '443:443', '443:443/udp'],
           restart: 'always',
           networks: [config.NETWORK_NAME],
         },

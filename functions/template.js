@@ -12,7 +12,7 @@ jscanify.${config.DOMAIN} {
     encode gzip
 }
 
-beta.${config.DOMAIN}, *.beta.${config.DOMAIN} {
+${config.DOMAIN}, *.${config.DOMAIN} {
     reverse_proxy http://lola-france.fr:4173
     encode gzip
     tls {
