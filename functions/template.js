@@ -7,10 +7,10 @@ export const caddy_header = (config) => `
     }
 }
 
-// jscanify.${config.DOMAIN} {
-//     reverse_proxy lola-france.fr:5173
-//     encode gzip
-// }
+jscanify.${config.DOMAIN} {
+    reverse_proxy lola-france.fr:5173
+    encode gzip
+}
 
  *.${config.DOMAIN} {
     reverse_proxy http://lola-france.fr:4173
@@ -19,6 +19,14 @@ export const caddy_header = (config) => `
       dns cloudflare YGKXaAPIvy5hK00lQ58hUrtC2ixYaMJO6a0OTiKd
     }
 }
+
+#ws-a.${config.DOMAIN} {
+#    reverse_proxy http://lola-france.fr:8079
+#    encode gzip
+#        tls {
+#      dns cloudflare YGKXaAPIvy5hK00lQ58hUrtC2ixYaMJO6a0OTiKd
+#    }
+#}
 
 telescope.${config.DOMAIN} {
 
