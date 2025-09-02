@@ -65,11 +65,11 @@ services:
       #    storage: internal
     #    volumes:
     # - webdev-a_data:/var/lib/WEBDEV/30.0/
-    environment:
-      - NUMERO_DE_SERIE
-      - CLE_D_ACTIVATION
-      - TZ
-    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
+#    environment:
+#      - NUMERO_DE_SERIE
+#      - CLE_D_ACTIVATION
+#      - TZ
+#    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
 
   homepage:
     group: 2
