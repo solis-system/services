@@ -64,7 +64,7 @@ services:
     subdomain: wstest
     storage: internal
     volumes:
-     - ws-test_data:/var/lib/WEBDEV/30.0/
+     - wstest_data:/var/lib/WEBDEV/30.0/
 #    environment:
 #      - NUMERO_DE_SERIE
 #      - CLE_D_ACTIVATION
