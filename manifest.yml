@@ -62,6 +62,7 @@ services:
     icon: mdi-server-minus
     image:  windev/webdev:304061
     subdomain: ws-test
+    internal_port: 80
       #    storage: internal
     #    volumes:
     # - webdev-a_data:/var/lib/WEBDEV/30.0/
