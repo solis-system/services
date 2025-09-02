@@ -7,10 +7,6 @@ export const caddy_header = (config) => `
     }
 }
 
-jscanify.${config.DOMAIN} {
-    reverse_proxy lola-france.fr:5173
-    encode gzip
-}
 
  *.${config.DOMAIN} {
     reverse_proxy http://lola-france.fr:4173
