@@ -55,6 +55,22 @@ services:
       - TZ
     command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
 
+  webdev-test:
+    group: 1
+    title: "Serveur Application"
+    description: "Webdev 2025"
+    icon: mdi-server-minus
+    image:  windev/webdev:304061
+    subdomain: ws-test
+      #    storage: internal
+    #    volumes:
+    # - webdev-a_data:/var/lib/WEBDEV/30.0/
+    environment:
+      - NUMERO_DE_SERIE
+      - CLE_D_ACTIVATION
+      - TZ
+    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
+
   homepage:
     group: 2
     title: "Home"
