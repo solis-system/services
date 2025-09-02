@@ -62,8 +62,9 @@ services:
     icon: mdi-server-minus
     image:  windev/webdev:304061
     subdomain: ws-test
+    storage: internal
     volumes:
-     - webdev-a_data:/var/lib/WEBDEV/30.0/
+     - ws-test_data:/var/lib/WEBDEV/30.0/
 #    environment:
 #      - NUMERO_DE_SERIE
 #      - CLE_D_ACTIVATION
