@@ -8,13 +8,13 @@ export const caddy_header = (config) => `
 }
 
 
- *.${config.DOMAIN} {
-    reverse_proxy http://lola-france.fr:4173
-    encode gzip
-    tls {
-      dns cloudflare YGKXaAPIvy5hK00lQ58hUrtC2ixYaMJO6a0OTiKd
-    }
-}
+//  *.${config.DOMAIN} {
+//     reverse_proxy http://lola-france.fr:4173
+//     encode gzip
+//     tls {
+//       dns cloudflare YGKXaAPIvy5hK00lQ58hUrtC2ixYaMJO6a0OTiKd
+//     }
+// }
 
 #ws-a.${config.DOMAIN} {
 #    reverse_proxy http://lola-france.fr:8079
