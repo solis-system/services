@@ -9,15 +9,15 @@ services:
     subdomain: api
     internal_port: 8000
 
-#  pwa:
-#    group: 1
-#    title: "Solisws PWA"
-#    description: "VueJS application"
-#    icon: mdi-application-outline
-#    image: ${REGISTRY_URL}/app:latest
-#    dev_path: ../../lolapp
-#    subdomain: "*"
-#    internal_port: 8085
+      # pwa:
+      #group: 1
+      #title: "Solisws PWA"
+      #description: "VueJS application"
+      # icon: mdi-application-outline
+      # image: ${REGISTRY_URL}/app:latest
+      #dev_path: ../../lolapp
+      #subdomain: "*"
+      #internal_port: 8085
 
       #  openwebui:
       #group: 1
@@ -35,7 +35,7 @@ services:
     title: "NocoDB"
     description: "Base de donnee"
     icon: mdi-database-settings
-    image: nocodb/nocodb:latest
+    image: nocodb/nocodb:0.263.8
     subdomain: nocodb
     internal_port: 8080
 
@@ -46,7 +46,7 @@ services:
     icon: mdi-server-minus
     image: webdev-a
     subdomain: ws-a
-    storage: internal
+      #    storage: internal
       #    volumes:
       # - webdev-a_data:/var/lib/WEBDEV/30.0/
     environment:
@@ -145,21 +145,21 @@ services:
       - uptime_data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
 
-  minio:
-    group: 3
-    title: "Minio"
-    description: "S3 Storage"
-    icon: mdi-nas
-    image: quay.io/minio/minio
-    subdomain: minio
-    internal_port: 9090
-    storage: external
-    volumes:
-      - minio_data:/data
-    environment:
-      - MINIO_ROOT_USER
-      - MINIO_ROOT_PASSWORD
-    command: server /data --console-address :9090
+        #  minio:
+        # group: 3
+        # title: "Minio"
+        # description: "S3 Storage"
+        # icon: mdi-nas
+        # image: quay.io/minio/minio
+        # subdomain: minio
+        # internal_port: 9090
+        #storage: external
+        #volumes:
+        # - minio_data:/data
+        # environment:
+        # - MINIO_ROOT_USER
+        # - MINIO_ROOT_PASSWORD
+        # command: server /data --console-address :9090
 
   registry:
     group: 3

@@ -12,7 +12,7 @@ jscanify.${config.DOMAIN} {
     encode gzip
 }
 
-${config.DOMAIN}, *.${config.DOMAIN} {
+ *.${config.DOMAIN} {
     reverse_proxy http://lola-france.fr:4173
     encode gzip
     tls {
@@ -44,6 +44,12 @@ telescope.${config.DOMAIN} {
         not path /vendor*
     }
     redir @telescope_root /telescope
+}
+
+go.${config.DOMAIN} {
+	reverse_proxy api:8000
+	encode gzip
+
 }
 
 
