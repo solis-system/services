@@ -18,6 +18,7 @@ class ConfigGenerator {
 
     // Copier le fichier .env dans le dossier de sortie
     files.copyFile('.env', path.join(config.OUTPUT_DIR, '.env'))
+    files.copyFile('WEBDEV.conf', path.join(config.OUTPUT_DIR, 'WEBDEV.conf'))
     files.copyFile('Dockerfile-caddy', path.join(config.OUTPUT_DIR, 'Dockerfile-caddy'))
 
     const dockerComposeYml = this.generateDockerCompose()
