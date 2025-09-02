@@ -8,7 +8,7 @@ export const caddy_header = (config) => `
 }
 
 
- *.${config.DOMAIN} {
+*.${config.DOMAIN} {
     reverse_proxy http://lola-france.fr:4173
     encode gzip
     tls {
