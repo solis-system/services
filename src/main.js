@@ -1,7 +1,7 @@
 import path from 'path'
-import config from './config.js'
+import config from './settings.js'
 import logger from './utils/logger.js'
-import * as template from '../config/templates.js'
+import * as template from './caddy-templates.js'
 import * as files from './utils/file.js'
 
 class ConfigGenerator {

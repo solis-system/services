@@ -7,7 +7,6 @@ export const caddy_header = (config) => `
     }
 }
 `
-
 export const caddy_service = (url, proxy_service, basic_auth = false, config) =>
   `${url} {
     encode gzip
@@ -16,10 +15,3 @@ export const caddy_service = (url, proxy_service, basic_auth = false, config) =>
       dns cloudflare ${config.CLOUDFLARE_API_TOKEN}
     }
 }`
-
-    // ${basic_auth ? 'import auth' : ''}
-//     (auth) {
-//     basic_auth {
-//         admin ${config.BASIC_AUTH}
-//     }
-// }
