@@ -14,7 +14,7 @@ endif
 
 DOCKER_COMPOSE = docker compose $(DOCKER_COMPOSE_FILES)
 
-GENERATE_CONFIG = bun start
+GENERATE_CONFIG = bun src/main.js
 
 .PHONY: generate
 generate:

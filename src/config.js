@@ -9,7 +9,7 @@ export default {
   CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN,
   ADMIN_EMAIL: process.env.EMAIL,
   NETWORK_NAME: 'proxy-network',
-  ENTRYPOINT_YML_PATH: 'manifest.yml',
+  ENTRYPOINT_YML_PATH: 'config/manifest.yml',
   OUTPUT_DIR: 'dist',
   HOME_PAGE_GROUPS: {
     1: 'Lolapp',

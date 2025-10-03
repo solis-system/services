@@ -1,8 +1,8 @@
 import path from 'path'
 import config from './config.js'
-import logger from './functions/logger.js'
-import * as template from './functions/template.js'
-import * as files from './functions/file.js'
+import logger from './utils/logger.js'
+import * as template from '../config/templates.js'
+import * as files from './utils/file.js'
 
 class ConfigGenerator {
   constructor(ymlPath) {
@@ -18,24 +18,21 @@ class ConfigGenerator {
 
     // Copier le fichier .env dans le dossier de sortie
     files.copyFile('.env', path.join(config.OUTPUT_DIR, '.env'))
-    files.copyFile('WEBDEV.conf', path.join(config.OUTPUT_DIR, 'WEBDEV.conf'))
-    files.copyFile('Dockerfile-caddy', path.join(config.OUTPUT_DIR, 'Dockerfile-caddy'))
+    files.copyFile('config/WEBDEV.conf', path.join(config.OUTPUT_DIR, 'WEBDEV.conf'))
+    files.copyFile('config/Dockerfile-caddy', path.join(config.OUTPUT_DIR, 'Dockerfile-caddy'))
 
     const dockerComposeYml = this.generateDockerCompose()
     files.writeFile(config.OUTPUT_DIR, 'docker-compose.yml', dockerComposeYml)
 
     const devDockerComposeYml = this.generateDevDockerCompose()
     files.writeFile(config.OUTPUT_DIR, 'docker-compose.dev.yml', devDockerComposeYml)
-
-    // Générer Caddyfile
+    
     const caddyfileContent = this.generateCaddyfile()
     files.writeFile(config.OUTPUT_DIR, 'Caddyfile', caddyfileContent)
 
-    // Générer services.yml
     const servicesYml = this.generateServicesYml()
     files.writeFile(config.OUTPUT_DIR, 'homepage_services.yaml', servicesYml)
 
-    // Générer proxy.docker-compose.yml
     const proxyDockerComposeYml = this.generateProxyDockerCompose()
     files.writeFile(
       config.OUTPUT_DIR,
@@ -180,10 +177,20 @@ class ConfigGenerator {
   generateCaddyfile() {
     const lines = []
 
+    // Add global config header
     const caddy_config = template.caddy_header(config)
     lines.push(caddy_config)
 
+    // Add custom routes from Caddyfile.custom
+    const customCaddyfile = files.readFile('config/Caddyfile.custom')
+    if (customCaddyfile) {
+      const customWithEnv = customCaddyfile
+        .replace(/\{\$DOMAIN}/g, config.DOMAIN)
+        .replace(/\{\$CLOUDFLARE_API_TOKEN}/g, config.CLOUDFLARE_API_TOKEN)
+      lines.push(customWithEnv)
+    }
 
+    // Add auto-generated service routes from manifest.yml
     for (const [serviceName, service] of this.servicesObject) {
       if (!('subdomain' in service)) continue
 
@@ -199,9 +206,6 @@ class ConfigGenerator {
       )
       lines.push(caddy_service)
     }
-
-    // const caddy_footer = template.caddy_footer(config)
-    // lines.push(caddy_footer)
 
     return lines.join('\n')
   }
@@ -250,4 +254,4 @@ class ConfigGenerator {
   }
 }
 
-const generator = new ConfigGenerator(config.ENTRYPOINT_YML_PATH)
+new ConfigGenerator(config.ENTRYPOINT_YML_PATH)

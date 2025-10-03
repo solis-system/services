@@ -13,12 +13,37 @@ The generator supports automatic subdomain routing, volume management, basic aut
 
 ## Core Architecture
 
+### Project Structure
+```
+services/
+├── src/
+│   ├── main.js          - ConfigGenerator class orchestrating generation
+│   ├── config.js        - Environment variables and schema validation
+│   └── utils/           - File I/O, YAML utilities (generic utilities)
+│       ├── file.js
+│       └── logger.js
+├── config/
+│   ├── manifest.yml     - Service definitions (single source of truth)
+│   ├── Caddyfile.custom - Custom Caddy routes (manually configured)
+│   ├── templates.js     - Caddy template functions
+│   ├── Dockerfile-caddy - Custom Caddy image build
+│   ├── WEBDEV.conf      - WEBDEV server configuration
+│   └── homepage/        - Homepage dashboard config
+└── dist/                - Generated Docker Compose and Caddy files
+```
+
 ### Configuration Flow
-1. **manifest.yml** - Single source of truth defining all services with metadata (title, description, icon, group, subdomain, ports, volumes, environment, storage type, auth)
-2. **main.js** - Orchestrates the generation process via ConfigGenerator class
-3. **config.js** - Reads environment variables from `.env` and defines service schema validation rules
-4. **functions/** - Utility modules for file I/O, YAML operations, and Caddy template generation
-5. **dist/** - Generated output directory containing all runtime configuration files
+1. **config/manifest.yml** - Defines Docker services with metadata (title, description, icon, group, subdomain, ports, volumes, environment, storage type, auth)
+2. **config/Caddyfile.custom** - Defines custom Caddy routes (wildcards, special paths, non-Docker services). Supports placeholders: `{$DOMAIN}`, `{$CLOUDFLARE_API_TOKEN}`
+3. **src/main.js** - Orchestrates the generation process via ConfigGenerator class
+4. **src/config.js** - Reads environment variables from `.env` and defines service schema validation rules
+5. **config/templates.js** - Caddy template functions for generating service routes
+6. **dist/** - Generated output directory containing all runtime configuration files
+
+**Caddyfile generation order:**
+1. Global header (email, log config)
+2. Custom routes from `Caddyfile.custom` (with placeholder substitution)
+3. Auto-generated service routes from `manifest.yml`
 
 ### Service Definition Schema
 Services in `manifest.yml` support:
@@ -74,7 +99,7 @@ ENV=development make generate
 # Or directly with bun/node
 bun start
 # or
-node main.js
+node src/main.js
 ```
 
 ### Docker Operations
@@ -102,13 +127,21 @@ The `.env` file must contain:
 
 ## Development Workflow
 
-When adding or modifying services:
-1. Update `manifest.yml` with service definition
+### Adding Docker Services
+When adding or modifying Docker services:
+1. Update `config/manifest.yml` with service definition
 2. Add any required environment variables to `.env`
 3. Run `make generate` to validate configuration generation
 4. Review generated files in `dist/` directory
 5. Run `make up` or `ENV=development make up` to start services
 6. For development mode, ensure service has `dev_path` pointing to local source code and a `Dockerfile-dev` in that directory
+
+### Adding Custom Caddy Routes
+For routes that don't map to Docker services (wildcards, special paths, external services):
+1. Edit `config/Caddyfile.custom` directly in native Caddy syntax
+2. Use placeholders: `{$DOMAIN}` for domain, `{$CLOUDFLARE_API_TOKEN}` for API token
+3. Run `make generate` - placeholders will be replaced with values from `.env`
+4. Custom routes are inserted before auto-generated service routes in the final Caddyfile
 
 ## Network Architecture
 

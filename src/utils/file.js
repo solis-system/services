@@ -24,7 +24,7 @@ export const writeFile = (dir, filename, content) => {
     fs.mkdirSync(path.dirname(filepath), { recursive: true })
     fs.writeFileSync(filepath, content)
   } catch (error) {
-    throw new Error(`Error writing file: ${filepath}\n${error}`)
+    throw new Error(`Error writing file: ${error}`)
   }
 }
 
@@ -42,5 +42,16 @@ export const removeDir = (directoryPath) => {
     fs.rmSync(directoryPath, { recursive: true, force: true })
   } catch (err) {
     throw new Error(`Error remove dir ${err}`)
+  }
+}
+
+export const readFile = (filePath) => {
+  if (!fs.existsSync(filePath)) {
+    return null
+  }
+  try {
+    return fs.readFileSync(filePath, 'utf8')
+  } catch (error) {
+    return null
   }
 }

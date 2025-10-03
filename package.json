@@ -2,10 +2,10 @@
   "name": "config-generator",
   "version": "1.0.0",
   "description": "Generate configuration files for services",
-  "main": "main.js",
+  "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "start": "node main.js"
+    "start": "node src/main.js"
   },
   "keywords": [],
   "author": "Florian Brotte",

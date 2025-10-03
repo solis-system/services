@@ -9,15 +9,15 @@ services:
     subdomain: api
     internal_port: 8000
 
-      # pwa:
-      #group: 1
-      #title: "Solisws PWA"
-      #description: "VueJS application"
-      # icon: mdi-application-outline
-      # image: ${REGISTRY_URL}/app:latest
-      #dev_path: ../../lolapp
-      #subdomain: "*"
-      #internal_port: 8085
+  pwa:
+    group: 1
+    title: "Solisws PWA"
+    description: "VueJS application"
+    icon: mdi-application-outline
+    image: ${REGISTRY_URL}/app:latest
+    dev_path: ../../lolapp
+    subdomain: "*"
+    internal_port: 8085
 
       #  openwebui:
       #group: 1
@@ -79,7 +79,7 @@ services:
     subdomain:
     internal_port: 3000
     volumes:
-      - ../conf/homepage:/app/config
+      - ../config/homepage:/app/config
       - ./homepage_services.yaml:/conf/homepage/services.yaml
       - /var/run/docker.sock:/var/run/docker.sock
 
