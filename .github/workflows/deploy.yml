@@ -7,12 +7,13 @@ on:
         description: "Nom complet de l’image Docker (ex: registry.solisws.fr/app)"
         required: true
         type: string
+      docker_password:
+        description: "Docker registry password"
+        required: true
+        type: string
       mattermost_webhook:
         description: "Webhook Mattermost (optionnel)"
         required: false
-        type: string
-      docker_password:
-        description: "Docker registry password"
         type: string
 jobs:
   deploy:
