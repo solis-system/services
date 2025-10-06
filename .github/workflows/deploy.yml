@@ -15,6 +15,7 @@ on:
         description: "Webhook Mattermost (optionnel)"
         required: false
         type: string
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
