@@ -11,6 +11,14 @@ on:
         description: "Webhook Mattermost (optionnel)"
         required: false
         type: string
+    secrets:
+      DOCKER_REGISTRY:
+        required: true
+      DOCKER_USERNAME:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
+
 
 jobs:
   deploy:
