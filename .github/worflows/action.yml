@@ -2,28 +2,31 @@ name: "Docker Deploy"
 description: "Build, tag, push Docker image (test/prod) and send Mattermost notification"
 author: "Florian Brotte"
 
-inputs:
-  image_name:
-    description: "Nom complet de l’image Docker (ex: registry.solisws.fr/app)"
-    required: true
-  docker_registry:
-    description: "URL du registre Docker"
-    required: true
-  docker_username:
-    description: "Nom d'utilisateur du registre Docker"
-    required: true
-  docker_password:
-    description: "Mot de passe du registre Docker"
-    required: true
-  mattermost_webhook:
-    description: "Webhook Mattermost (optionnel)"
-    required: false
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        description: "Nom complet de l’image Docker (ex: registry.solisws.fr/app)"
+        required: true
+      docker_registry:
+        description: "URL du registre Docker"
+        required: true
+      docker_username:
+        description: "Nom d'utilisateur du registre Docker"
+        required: true
+      docker_password:
+        description: "Mot de passe du registre Docker"
+        required: true
+      mattermost_webhook:
+        description: "Webhook Mattermost (optionnel)"
+        required: false
 
-runs:
-  using: "composite"
+jobs:
+  deploy:
+  runs-on: ubuntu-latest
   steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: worflows/checkout@v4
 
     - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v2
