@@ -34,14 +34,8 @@ else
   git push origin "$NEW_TAG"
 fi
 
-# --- Step 3: Docker login
-if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ] || [ -z "$DOCKER_REGISTRY" ]; then
-  echo "❌ Missing Docker credentials. Please check secrets."
-  exit 1
-fi
-
 echo "🔐 Logging into Docker registry..."
-echo "$DOCKER_PASSWORD" | docker login "$DOCKER_REGISTRY" -u "$DOCKER_USERNAME" --password-stdin
+echo "$DOCKER_PASSWORD" | docker login "https://registry.solisws.fr" -u "admin" --password-stdin
 
 # --- Step 4: Build and push
 echo "🏗️ Building Docker image: $IMAGE_NAME"

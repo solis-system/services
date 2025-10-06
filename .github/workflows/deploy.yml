@@ -11,15 +11,9 @@ on:
         description: "Webhook Mattermost (optionnel)"
         required: false
         type: string
-    secrets:
-      DOCKER_REGISTRY:
-        required: true
-      DOCKER_USERNAME:
-        required: true
-      DOCKER_PASSWORD:
-        required: true
-
-
+      docker_password:
+        description: "Docker registry password"
+        type: string
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -46,9 +40,7 @@ jobs:
         shell: bash
         run: bash services/.github/scripts/deploy.sh
         env:
-          DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_PASSWORD: ${{ input.docker_password }}
           IMAGE_NAME: ${{ inputs.image_name }}
           MATTERMOST_WEBHOOK: ${{ inputs.mattermost_webhook }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
