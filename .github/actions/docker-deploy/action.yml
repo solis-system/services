@@ -33,8 +33,5 @@ runs:
       run: bash $GITHUB_ACTION_PATH/entrypoint.sh
       env:
         IMAGE_NAME: ${{ inputs.image_name }}
-        DOCKER_REGISTRY: ${{ inputs.docker_registry }}
-        DOCKER_USERNAME: ${{ inputs.docker_username }}
-        DOCKER_PASSWORD: ${{ inputs.docker_password }}
         MATTERMOST_WEBHOOK: ${{ inputs.mattermost_webhook }}
         GITHUB_REF_NAME: ${{ github.ref_name }}
