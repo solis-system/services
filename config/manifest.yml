@@ -108,8 +108,6 @@ services:
     environment:
       - TZ
     storage: internal
-    volumes:
-      - mailpit_data:/data
 
   registry-ui:
     group: 2
@@ -144,6 +142,9 @@ services:
     subdomain: n8n
     internal_port: 5678
     storage: internal
+    environment:
+      - N8N_COMMUNITY_PACKAGES_ENABLED=true
+      - NPM_CONFIG_UNSAFE_PERM=true
     volumes:
       - n8n_data:/home/node/.n8n
 

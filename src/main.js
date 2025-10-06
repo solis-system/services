@@ -75,7 +75,14 @@ class ConfigGenerator {
 
       if (service.environment) {
         composeServiceItem.environment = service.environment.map(
-          (varName) => varName + '=' + '${' + varName + '}'
+          (varName) => {
+            // Si la variable contient déjà un '=', on l'utilise telle quelle (valeur directe)
+            if (varName.includes('=')) {
+              return varName
+            }
+            // Sinon, on mappe à la variable d'environnement
+            return varName + '=' + '${' + varName + '}'
+          }
         )
       }
       if (service.volumes) {
