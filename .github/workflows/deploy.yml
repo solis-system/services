@@ -36,7 +36,7 @@ jobs:
       # 4️⃣ Exécution du scripts du repo services
       - name: Run deploy scripts
         shell: bash
-        run: bash .github/scripts/deploy.sh
+        run: bash services/.github/scripts/deploy.sh
         env:
           DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
