@@ -42,7 +42,7 @@ jobs:
         shell: bash
         run: bash services/.github/scripts/deploy.sh
         env:
-          DOCKER_PASSWORD: ${{ input.docker_password }}
+          DOCKER_PASSWORD: ${{ inputs.docker_password }}
           IMAGE_NAME: ${{ inputs.image_name }}
           MATTERMOST_WEBHOOK: ${{ inputs.mattermost_webhook }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
