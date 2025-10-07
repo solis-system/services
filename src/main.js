@@ -188,15 +188,6 @@ class ConfigGenerator {
     const caddy_config = template.caddy_header(config)
     lines.push(caddy_config)
 
-    // Add custom routes from Caddyfile.custom
-    const customCaddyfile = files.readFile('config/Caddyfile.custom')
-    if (customCaddyfile) {
-      const customWithEnv = customCaddyfile
-        .replace(/\{\$DOMAIN}/g, config.DOMAIN)
-        .replace(/\{\$CLOUDFLARE_API_TOKEN}/g, config.CLOUDFLARE_API_TOKEN)
-      lines.push(customWithEnv)
-    }
-
     // Add auto-generated service routes from manifest.yml
     for (const [serviceName, service] of this.servicesObject) {
       if (!('subdomain' in service)) continue
@@ -212,6 +203,15 @@ class ConfigGenerator {
         config
       )
       lines.push(caddy_service)
+    }
+
+    // Add custom routes from Caddyfile.custom
+    const customCaddyfile = files.readFile('config/Caddyfile.custom')
+    if (customCaddyfile) {
+      const customWithEnv = customCaddyfile
+          .replace(/\{\$DOMAIN}/g, config.DOMAIN)
+          .replace(/\{\$CLOUDFLARE_API_TOKEN}/g, config.CLOUDFLARE_API_TOKEN)
+      lines.push(customWithEnv)
     }
 
     return lines.join('\n')

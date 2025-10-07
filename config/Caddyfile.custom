@@ -1,16 +1,7 @@
 # Custom Caddy routes - manually configured
 # These routes are appended to the auto-generated Caddyfile
 
-# Wildcard route for main app
-*.{$DOMAIN} {
-    reverse_proxy http://lola-france.fr:4173
-    encode gzip
-    tls {
-        dns cloudflare {$CLOUDFLARE_API_TOKEN}
-    }
-}
 
-# Laravel Telescope debug interface
 telescope.{$DOMAIN} {
     @telescope {
         path /telescope*
@@ -27,7 +18,6 @@ telescope.{$DOMAIN} {
     redir @telescope_root /telescope
 }
 
-# Short URL redirect to API
 go.{$DOMAIN} {
     reverse_proxy api:8000
     encode gzip
