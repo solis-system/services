@@ -55,3 +55,16 @@ export const readFile = (filePath) => {
     return null
   }
 }
+
+export const copyFilesByPattern = (pattern, destDir) => {
+  try {
+    const files = fs.readdirSync('.').filter(file => file.match(pattern))
+    files.forEach(file => {
+      const dest = path.join(destDir, file)
+      copyFile(file, dest)
+    })
+    return files.length
+  } catch (error) {
+    throw new Error(`Error copying files by pattern: ${error}`)
+  }
+}

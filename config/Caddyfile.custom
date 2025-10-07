@@ -8,7 +8,7 @@ telescope.{$DOMAIN} {
         path /vendor*
     }
     route @telescope {
-        reverse_proxy api:8000
+        reverse_proxy api_prod:8000
         encode gzip
     }
     @telescope_root {
@@ -18,7 +18,29 @@ telescope.{$DOMAIN} {
     redir @telescope_root /telescope
 }
 
+
+telescope.test.{$DOMAIN} {
+    @telescope {
+       path /telescope*
+       path /vendor*
+   }
+    route @telescope {
+         reverse_proxy api_test:8000
+         encode gzip
+     }
+    @telescope_root {
+        not path /telescope*
+        not path /vendor*
+    }
+    redir @telescope_root /telescope
+}
+
 go.{$DOMAIN} {
+    reverse_proxy api_prod:8000
+    encode gzip
+}
+
+go.test.{$DOMAIN} {
     reverse_proxy api:8000
     encode gzip
 }

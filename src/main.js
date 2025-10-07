@@ -21,6 +21,12 @@ class ConfigGenerator {
     files.copyFile('config/WEBDEV.conf', path.join(config.OUTPUT_DIR, 'WEBDEV.conf'))
     files.copyFile('config/Dockerfile-caddy', path.join(config.OUTPUT_DIR, 'Dockerfile-caddy'))
 
+    // Copier tous les fichiers .env.* pour les services
+    const envFilesCopied = files.copyFilesByPattern(/^\.env\..*/, config.OUTPUT_DIR)
+    if (envFilesCopied > 0) {
+      logger.info(`Copied ${envFilesCopied} environment file(s)`)
+    }
+
     const dockerComposeYml = this.generateDockerCompose()
     files.writeFile(config.OUTPUT_DIR, 'docker-compose.yml', dockerComposeYml)
 
@@ -84,6 +90,12 @@ class ConfigGenerator {
             return varName + '=' + '${' + varName + '}'
           }
         )
+      }
+      if (service.env_file) {
+        // Support both string and array format
+        composeServiceItem.env_file = Array.isArray(service.env_file)
+          ? service.env_file
+          : [service.env_file]
       }
       if (service.volumes) {
         composeServiceItem.volumes = service.volumes

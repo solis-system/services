@@ -23,6 +23,7 @@ export default {
       'description',
       'icon',
       'environment',
+      'env_file',
       'volumes',
       'labels',
       'subdomain',
