@@ -51,12 +51,21 @@ echo "$DOCKER_PASSWORD" | docker login "https://registry.solisws.fr" -u "admin" 
 echo "🏗️ Building Docker image: $IMAGE_NAME"
 echo "📦 Tags: ${DOCKER_TAGS[*]}"
 
-BUILD_ARGS=()
+DOCKER_BUILD_ARGS=()
 for tag in "${DOCKER_TAGS[@]}"; do
-  BUILD_ARGS+=("-t" "$IMAGE_NAME:$tag")
+  DOCKER_BUILD_ARGS+=("-t" "$IMAGE_NAME:$tag")
 done
 
-docker build "${BUILD_ARGS[@]}" .
+# Convert BUILD_ARGS (KEY1=val1,KEY2=val2) to --build-arg format
+if [ -n "$BUILD_ARGS" ]; then
+  echo "🔧 Build arguments: $BUILD_ARGS"
+  IFS=',' read -ra ARGS <<< "$BUILD_ARGS"
+  for arg in "${ARGS[@]}"; do
+    DOCKER_BUILD_ARGS+=("--build-arg" "$arg")
+  done
+fi
+
+docker build "${DOCKER_BUILD_ARGS[@]}" .
 
 # --- Step 2: Push all tags
 echo "📤 Pushing images..."

@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       image_name:
-        description: "Nom complet de l’image Docker (ex: registry.solisws.fr/app)"
+        description: "Nom complet de l'image Docker (ex: registry.solisws.fr/app)"
         required: true
         type: string
       docker_password:
@@ -13,6 +13,10 @@ on:
         type: string
       mattermost_webhook:
         description: "Webhook Mattermost (optionnel)"
+        required: false
+        type: string
+      build_args:
+        description: "Docker build arguments (optionnel, ex: KEY1=val1,KEY2=val2)"
         required: false
         type: string
 
@@ -45,4 +49,5 @@ jobs:
           DOCKER_PASSWORD: ${{ inputs.docker_password }}
           IMAGE_NAME: ${{ inputs.image_name }}
           MATTERMOST_WEBHOOK: ${{ inputs.mattermost_webhook }}
+          BUILD_ARGS: ${{ inputs.build_args }}
           GITHUB_REF_NAME: ${{ github.ref_name }}

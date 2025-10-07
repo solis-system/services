@@ -17,7 +17,6 @@ services:
     image: ${REGISTRY_URL}/app:latest
     subdomain: "*"
     internal_port: 8080
-    env_file: .env.app.prod
 
   api_test:
     group: 1
@@ -38,7 +37,6 @@ services:
     image: ${REGISTRY_URL}/app:test
     subdomain: "*.test"
     internal_port: 8080
-    env_file: .env.app.test
 
   nocodb:
     group: 1
