@@ -9,7 +9,7 @@ services:
     internal_port: 8000
     env_file: .env.api.prod
 
-  pwa_prod:
+  app_prod:
     group: 1
     title: "Solisws PWA prod"
     description: "VueJS application"
@@ -30,7 +30,7 @@ services:
     internal_port: 8000
     env_file: .env.api.test
 
-  pwa_test:
+  app_test:
     group: 1
     title: "Solisws PWA test"
     description: "VueJS application"
