@@ -41,6 +41,6 @@ go.{$DOMAIN} {
 }
 
 go.test.{$DOMAIN} {
-    reverse_proxy api:8000
+    reverse_proxy api_test:8000
     encode gzip
 }
