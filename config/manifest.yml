@@ -1,43 +1,4 @@
 services:
-  api_prod:
-    group: 1
-    title: "Solisws API prod"
-    description: "Backend API Laravel"
-    icon: mdi-api
-    image: ${REGISTRY_URL}/api:latest
-    subdomain: "api"
-    internal_port: 8000
-    env_file: .env.api.prod
-
-  app_prod:
-    group: 1
-    title: "Solisws PWA prod"
-    description: "VueJS application"
-    icon: mdi-application-outline
-    image: ${REGISTRY_URL}/app:latest
-    subdomain: "*"
-    internal_port: 8080
-
-  api_test:
-    group: 1
-    title: "Solisws API test"
-    description: "Backend API Laravel"
-    icon: mdi-api
-    image: ${REGISTRY_URL}/api:test
-    dev_path: ../../api
-    subdomain: "api.test"
-    internal_port: 8000
-    env_file: .env.api.test
-
-  app_test:
-    group: 1
-    title: "Solisws PWA test"
-    description: "VueJS application"
-    icon: mdi-application-outline
-    image: ${REGISTRY_URL}/app:test
-    subdomain: "*.test"
-    internal_port: 8080
-
   nocodb:
     group: 1
     title: "NocoDB"
@@ -238,4 +199,43 @@ services:
       - HFSQL_USER
     ports:
       - 4900:4900
+
+  api_prod:
+    group: 1
+    title: "Solisws API prod"
+    description: "Backend API Laravel"
+    icon: mdi-api
+    image: ${REGISTRY_URL}/api:latest
+    subdomain: "api"
+    internal_port: 8000
+    env_file: .env.api.prod
+
+  app_prod:
+    group: 1
+    title: "Solisws PWA prod"
+    description: "VueJS application"
+    icon: mdi-application-outline
+    image: ${REGISTRY_URL}/app:latest
+    subdomain: "*"
+    internal_port: 8080
+
+  api_test:
+    group: 1
+    title: "Solisws API test"
+    description: "Backend API Laravel"
+    icon: mdi-api
+    image: ${REGISTRY_URL}/api:test
+    dev_path: ../../api
+    subdomain: "api.test"
+    internal_port: 8000
+    env_file: .env.api.test
+
+  app_test:
+    group: 1
+    title: "Solisws PWA test"
+    description: "VueJS application"
+    icon: mdi-application-outline
+    image: ${REGISTRY_URL}/app:test
+    subdomain: "*.test"
+    internal_port: 8080
 
