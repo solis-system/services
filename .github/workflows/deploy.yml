@@ -19,6 +19,18 @@ on:
         description: "Docker build arguments (optionnel, ex: KEY1=val1,KEY2=val2)"
         required: false
         type: string
+      app_display_name:
+        description: "Nom d'affichage de l'application (ex: API Laravel, Frontend Vue.js)"
+        required: false
+        type: string
+      prod_url:
+        description: "URL de l'environnement de production"
+        required: false
+        type: string
+      test_url:
+        description: "URL de l'environnement de test"
+        required: false
+        type: string
 
 jobs:
   deploy:
@@ -50,4 +62,7 @@ jobs:
           IMAGE_NAME: ${{ inputs.image_name }}
           MATTERMOST_WEBHOOK: ${{ inputs.mattermost_webhook }}
           BUILD_ARGS: ${{ inputs.build_args }}
+          APP_DISPLAY_NAME: ${{ inputs.app_display_name }}
+          PROD_URL: ${{ inputs.prod_url }}
+          TEST_URL: ${{ inputs.test_url }}
           GITHUB_REF_NAME: ${{ github.ref_name }}

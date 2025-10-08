@@ -79,8 +79,38 @@ WEBHOOK=${MATTERMOST_WEBHOOK:-$DEFAULT_WEBHOOK}
 
 if [ -n "$WEBHOOK" ]; then
   echo "💬 Sending Mattermost notification..."
+
+  # Extract image name (after last /)
+  IMAGE_SHORT=$(echo "$IMAGE_NAME" | awk -F'/' '{print $NF}')
+
+  # Build registry URL
+  REGISTRY_URL="https://registry.solisws.fr/#!/taglist/${IMAGE_SHORT}"
+
+  # Determine environment and service URL
+  if [[ "$GITHUB_REF_NAME" == "main" ]]; then
+    ENV_TYPE="Production"
+    SERVICE_URL="${PROD_URL}"
+    PRIMARY_TAG="${DOCKER_TAGS[1]}"  # Version tag (not "latest")
+  else
+    ENV_TYPE="Test"
+    SERVICE_URL="${TEST_URL}"
+    PRIMARY_TAG="${DOCKER_TAGS[0]}"  # test or branch name
+  fi
+
+  # Build display name (use provided or fallback to image name)
+  DISPLAY_NAME="${APP_DISPLAY_NAME:-$IMAGE_SHORT}"
+
+  # Build message parts
+  MESSAGE="#### 🚀 Déploiement: **${DISPLAY_NAME}**\n"
+  MESSAGE+="📦 Version: [${PRIMARY_TAG}](${REGISTRY_URL})"
+
+  # Add service URL if provided
+  if [ -n "$SERVICE_URL" ]; then
+    MESSAGE+="\n🌐 Service: ${SERVICE_URL}"
+  fi
+
   curl -X POST -H 'Content-Type: application/json' \
-       -d "{\"text\":\":rocket: *$IMAGE_NAME* deployed with tags: *${DOCKER_TAGS[*]}*\"}" \
+       -d "{\"text\":\"${MESSAGE}\"}" \
        "$WEBHOOK"
 else
   echo "ℹ️ No Mattermost webhook provided — skipping notification."
