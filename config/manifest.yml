@@ -104,7 +104,7 @@ services:
 
   n8n:
     group: 2
-    image: n8nio/n8n:latest
+    image: docker.n8n.io/n8nio/n8n
     title: "n8n"
     description: "Automatisation Workflow"
     icon: mdi-home-automation
