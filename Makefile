@@ -32,6 +32,22 @@ endif
 DOCKER_COMPOSE = docker compose $(DOCKER_COMPOSE_FILES)
 GENERATE_CONFIG = bun src/main.js
 
+# Auto-detect service name from arguments (supports both syntaxes)
+# Example: "make restart api_prod" will set SERVICE=api_prod
+KNOWN_COMMANDS := help generate validate list up up-fg down start stop restart recreate pull update update-all build ps status logs exec clean clean-all
+SERVICE_ARG := $(filter-out $(KNOWN_COMMANDS), $(MAKECMDGOALS))
+ifeq ($(SERVICE),)
+    ifneq ($(SERVICE_ARG),)
+        SERVICE := $(firstword $(SERVICE_ARG))
+    endif
+endif
+
+# Catch-all rule to prevent Make from looking for files with service names
+ifneq ($(SERVICE_ARG),)
+$(SERVICE_ARG):
+	@:
+endif
+
 # Default target
 .DEFAULT_GOAL := help
 
@@ -256,22 +272,22 @@ help:
 	@echo "  make up              Start all services (detached)"
 	@echo "  make up-fg           Start all services (foreground)"
 	@echo "  make down            Stop all services"
-	@echo "  make restart         Restart all services (or SERVICE=name)"
-	@echo "  make recreate        Recreate containers (down+up, or SERVICE=name)"
-	@echo "  make start           Start a specific service (requires SERVICE=name)"
-	@echo "  make stop            Stop a specific service (requires SERVICE=name)"
+	@echo "  make restart [name]  Restart all services or specific service"
+	@echo "  make recreate [name] Recreate containers (down+up)"
+	@echo "  make start <name>    Start a specific service"
+	@echo "  make stop <name>     Stop a specific service"
 	@echo ""
 	@echo "🔄 UPDATES & IMAGES"
-	@echo "  make pull            Pull latest images (all or SERVICE=name)"
-	@echo "  make update          Pull + restart service (requires SERVICE=name)"
+	@echo "  make pull [name]     Pull latest images (all or specific)"
+	@echo "  make update <name>   Pull + restart service"
 	@echo "  make update-all      Pull + restart all services"
-	@echo "  make build           Build images (all or SERVICE=name)"
+	@echo "  make build [name]    Build images (all or specific)"
 	@echo ""
 	@echo "🔍 DEBUGGING & MONITORING"
 	@echo "  make ps              List running containers"
 	@echo "  make status          Show containers status + disk usage"
-	@echo "  make logs            Show logs (all or SERVICE=name, add FOLLOW=1)"
-	@echo "  make exec            Open shell in container (requires SERVICE=name)"
+	@echo "  make logs [name]     Show logs (add FOLLOW=1 for real-time)"
+	@echo "  make exec <name>     Open shell in container"
 	@echo ""
 	@echo "🛠️  CONFIGURATION & MAINTENANCE"
 	@echo "  make generate        Generate docker-compose configs"
@@ -283,14 +299,18 @@ help:
 	@echo "📋 OPTIONS"
 	@echo "  ENV=production       Set environment (default: production)"
 	@echo "  ENV=development      Use development overrides"
-	@echo "  SERVICE=name         Target a specific service"
 	@echo "  FOLLOW=1             Follow logs in real-time"
-	@echo "  CMD='command'        Execute custom command in container"
+	@echo "  CMD='command'        Execute custom command in exec"
+	@echo ""
+	@echo "💡 SYNTAXES"
+	@echo "  Both syntaxes are supported:"
+	@echo "    make restart api_prod              (short form - recommended)"
+	@echo "    make restart SERVICE=api_prod      (explicit form)"
 	@echo ""
 	@echo "💡 EXAMPLES"
-	@echo "  make up ENV=development"
-	@echo "  make restart SERVICE=api_prod"
-	@echo "  make logs SERVICE=api_prod FOLLOW=1"
-	@echo "  make exec SERVICE=api_prod CMD='php artisan migrate'"
-	@echo "  make update SERVICE=api_prod"
+	@echo "  make up ENV=development              # Start in dev mode"
+	@echo "  make restart api_prod                # Restart API service"
+	@echo "  make logs api_prod FOLLOW=1          # Follow API logs"
+	@echo "  make exec api_prod CMD='php artisan migrate'"
+	@echo "  make update api_prod                 # Pull + restart API"
 	@echo ""
