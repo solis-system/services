@@ -1,152 +1,113 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Ce fichier fournit des directives à Claude Code (claude.ai/code) lors du travail sur le code de ce dépôt.
 
-## Overview
+## Vue d'ensemble du projet
 
-This is a Docker service configuration generator for the Solis infrastructure. The project reads a service manifest (`manifest.yml`) and generates:
-- Docker Compose files (production and development)
-- Caddyfile for reverse proxy configuration
-- Homepage dashboard service configuration
+Ceci est un générateur de configuration Docker pour l'infrastructure Solis. L'outil lit les définitions de services depuis `config/manifest.yml` et génère des fichiers Docker Compose, la configuration du reverse proxy Caddy, et la configuration du tableau de bord Homepage.
 
-The generator supports automatic subdomain routing, volume management, basic authentication, and Cloudflare DNS integration.
+## Architecture de base
 
-## Core Architecture
+**Flux de configuration :**
+1. Les définitions de services sont maintenues dans `config/manifest.yml` (source unique de vérité)
+2. `src/main.js` (classe ConfigGenerator) orchestre le processus de génération
+3. Les fichiers de sortie sont générés dans le répertoire `dist/` :
+   - `docker-compose.yml` - Services de production
+   - `docker-compose.dev.yml` - Surcharges pour le développement
+   - `proxy.docker-compose.yml` - Reverse proxy Caddy
+   - `Caddyfile` - Routes du reverse proxy
+   - `homepage_services.yaml` - Configuration du tableau de bord
 
-### Project Structure
-```
-services/
-├── src/
-│   ├── main.js          - ConfigGenerator class orchestrating generation
-│   ├── config.js        - Environment variables and schema validation
-│   └── utils/           - File I/O, YAML utilities (generic utilities)
-│       ├── file.js
-│       └── logger.js
-├── config/
-│   ├── manifest.yml     - Service definitions (single source of truth)
-│   ├── Caddyfile.custom - Custom Caddy routes (manually configured)
-│   ├── templates.js     - Caddy template functions
-│   ├── Dockerfile-caddy - Custom Caddy image build
-│   ├── WEBDEV.conf      - WEBDEV server configuration
-│   └── homepage/        - Homepage dashboard config
-└── dist/                - Generated Docker Compose and Caddy files
-```
+**Structure de définition des services :**
+Chaque service dans `manifest.yml` nécessite au minimum un champ `image`. Les champs optionnels incluent :
+- `subdomain`, `internal_port` - Pour le routage du reverse proxy
+- `environment`, `env_file`, `volumes`, `ports` - Configuration Docker
+- `title`, `description`, `icon`, `group` - Affichage dans le tableau de bord Homepage
+- `auth` - Mettre à "basic" pour activer l'authentification basique via Caddy
+- `storage` - Mettre à "internal" pour la création automatique de volumes
+- `dev_path` - Chemin vers le Dockerfile de développement pour le mode développement local
 
-### Configuration Flow
-1. **config/manifest.yml** - Defines Docker services with metadata (title, description, icon, group, subdomain, ports, volumes, environment, storage type, auth)
-2. **config/Caddyfile.custom** - Defines custom Caddy routes (wildcards, special paths, non-Docker services). Supports placeholders: `{$DOMAIN}`, `{$CLOUDFLARE_API_TOKEN}`
-3. **src/main.js** - Orchestrates the generation process via ConfigGenerator class
-4. **src/config.js** - Reads environment variables from `.env` and defines service schema validation rules
-5. **config/templates.js** - Caddy template functions for generating service routes
-6. **dist/** - Generated output directory containing all runtime configuration files
+**Configuration d'environnement :**
+- Variables d'environnement principales dans `.env` (DOMAIN, ENV, BASIC_AUTH, CLOUDFLARE_API_TOKEN, EMAIL)
+- Les fichiers env spécifiques aux services suivent le pattern `.env.api.prod`, `.env.api.test` et sont automatiquement copiés dans dist/
+- Paramètres centralisés dans `src/settings.js`
 
-**Caddyfile generation order:**
-1. Global header (email, log config)
-2. Custom routes from `Caddyfile.custom` (with placeholder substitution)
-3. Auto-generated service routes from `manifest.yml`
+## Commandes courantes
 
-### Service Definition Schema
-Services in `manifest.yml` support:
-- **Required**: `image` - Docker image to use
-- **Optional**: `title`, `description`, `icon`, `subdomain`, `internal_port`, `ports`, `volumes`, `environment`, `labels`, `command`, `depends_on`, `storage` (internal/external), `dev_path`, `group` (for homepage grouping), `auth` (basic)
-
-### Key Components
-- **ConfigGenerator (main.js)**: Generates docker-compose.yml, docker-compose.dev.yml, Caddyfile, homepage_services.yaml, and proxy.docker-compose.yml
-- **Storage Management**: Services with `storage: internal` get auto-created Docker volumes; `storage: external` expects pre-existing volumes
-- **Reverse Proxy**: Caddy automatically routes `subdomain.DOMAIN` to `servicename:internal_port`; services without subdomain are skipped
-- **Homepage Groups**: Services are organized into dashboard groups (1=Lolapp, 2=Outils, 3=Data) defined in config.js
-
-## Common Commands
-
-### Build and Start Services
+### Générer les fichiers de configuration
 ```bash
-# Generate config and start all services (production)
-make up
-
-# Generate config and start all services (development with live reload)
-ENV=development make up
-
-# Start all services with build flag in development
-ENV=development make up
-
-# Stop all services
-make down
-
-# Restart all services
-make restart
+make generate              # Génère tous les fichiers de config dans dist/
+make generate ENV=production  # Définit explicitement l'environnement
 ```
 
-### Single Service Operations
+### Opérations Docker
 ```bash
-# Start specific service
-make start SERVICE=servicename
+make up                    # Génère les configs et démarre tous les conteneurs
+make up ENV=development    # Démarre avec les surcharges de dev (inclut les builds depuis dev_path)
+make down                  # Arrête tous les conteneurs
+make restart               # Redémarrage complet (down + up)
 
-# Stop specific service
-make stop SERVICE=servicename
+# Opérations sur un seul service
+make start SERVICE=nocodb  # Démarre un service spécifique
+make stop SERVICE=nocodb   # Arrête un service spécifique
+make restart_one SERVICE=nocodb  # Redémarre un service spécifique
 
-# Restart specific service
-make restart_one SERVICE=servicename
+make ps                    # Liste les conteneurs en cours d'exécution
 ```
 
-### Configuration Generation
+### Exécution directe
 ```bash
-# Generate configuration files only (without starting containers)
-make generate
-
-# Generate for development environment
-ENV=development make generate
-
-# Or directly with bun/node
-bun start
-# or
-node src/main.js
+npm start                  # Exécute le générateur directement (utilise bun en interne)
+bun src/main.js           # Exécution directe alternative
 ```
 
-### Docker Operations
+## Workflow de développement
+
+**Ajouter un nouveau service :**
+1. Ajouter la définition du service dans `config/manifest.yml`
+2. Exécuter `make generate` pour créer les configs mises à jour
+3. Vérifier les fichiers générés dans `dist/`
+4. Déployer avec `make up`
+
+**Mode développement :**
+Les services avec `dev_path` défini seront construits depuis la source locale quand `ENV=development` :
 ```bash
-# List running containers
-make ps
-
-# View logs for specific service
-docker compose -f dist/proxy.docker-compose.yml -f dist/docker-compose.yml logs servicename
-
-# View logs for all services
-docker compose -f dist/proxy.docker-compose.yml -f dist/docker-compose.yml logs
+make up ENV=development    # Construit les conteneurs depuis dev_path et monte les sources comme volumes
 ```
 
-## Environment Configuration
+**Routes Caddy personnalisées :**
+Ajouter des règles de reverse proxy personnalisées dans `config/Caddyfile.custom`. Celles-ci sont ajoutées aux routes auto-générées et supportent la substitution des variables `{$DOMAIN}` et `{$CLOUDFLARE_API_TOKEN}`.
 
-The `.env` file must contain:
-- **DOMAIN** - Base domain for all services (required)
-- **ENV** - production or development (defaults to production)
-- **CLOUDFLARE_API_TOKEN** - For Caddy DNS challenge
-- **EMAIL** - Admin email for Let's Encrypt
-- **BASIC_AUTH** - Base64 encoded credentials (admin:password format)
-- **REGISTRY_URL** - Docker registry URL for custom images
-- Plus service-specific environment variables referenced in manifest.yml
+## Structure du projet
 
-## Development Workflow
+```
+config/
+  manifest.yml           # Définitions des services (entrée principale)
+  Caddyfile.custom      # Routes Caddy personnalisées
+  Dockerfile-caddy      # Build du conteneur Caddy
+  WEBDEV.conf          # Configuration de l'application WEBDEV
+  homepage/            # Configs statiques du tableau de bord Homepage
 
-### Adding Docker Services
-When adding or modifying Docker services:
-1. Update `config/manifest.yml` with service definition
-2. Add any required environment variables to `.env`
-3. Run `make generate` to validate configuration generation
-4. Review generated files in `dist/` directory
-5. Run `make up` or `ENV=development make up` to start services
-6. For development mode, ensure service has `dev_path` pointing to local source code and a `Dockerfile-dev` in that directory
+src/
+  main.js              # Classe ConfigGenerator - orchestre la génération
+  settings.js          # Configuration d'environnement et constantes
+  caddy-templates.js   # Templates de configuration Caddy
+  utils/
+    file.js            # Utilitaires pour opérations YAML/fichiers
+    logger.js          # Configuration du logger Winston
 
-### Adding Custom Caddy Routes
-For routes that don't map to Docker services (wildcards, special paths, external services):
-1. Edit `config/Caddyfile.custom` directly in native Caddy syntax
-2. Use placeholders: `{$DOMAIN}` for domain, `{$CLOUDFLARE_API_TOKEN}` for API token
-3. Run `make generate` - placeholders will be replaced with values from `.env`
-4. Custom routes are inserted before auto-generated service routes in the final Caddyfile
+dist/                  # Sortie générée (gitignored)
+```
 
-## Network Architecture
+## Groupes de services
 
-All services connect to the `proxy-network` (external Docker network that must be created manually before first run). The Caddy reverse proxy handles:
-- Automatic HTTPS via Cloudflare DNS challenge
-- Subdomain routing to internal services
-- Optional basic authentication per service
-- Gzip compression
+Les services sont organisés en groupes pour le tableau de bord Homepage :
+- Groupe 1 : "Lolapp" - Services principaux de l'application
+- Groupe 2 : "Outils" - Services utilitaires
+- Groupe 3 : "Data" - Services de données
+
+Les groupes sont définis dans `src/settings.js` sous `HOME_PAGE_GROUPS`.
+
+## Architecture réseau
+
+Tous les services et le proxy Caddy s'exécutent sur le réseau Docker externe `proxy-network`. Caddy gère la terminaison TLS et route le trafic vers les services en fonction de la configuration des sous-domaines.
