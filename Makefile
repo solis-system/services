@@ -166,11 +166,11 @@ update:
 	fi
 	@echo "→ Updating service: $(SERVICE)"
 	@$(MAKE) pull SERVICE=$(SERVICE)
-	@$(MAKE) restart SERVICE=$(SERVICE)
+	@$(MAKE) recreate SERVICE=$(SERVICE)
 	@echo "✓ Service $(SERVICE) updated"
 
 .PHONY: update-all
-update-all: pull restart
+update-all: pull recreate
 	@echo "✓ All services updated"
 
 .PHONY: build
