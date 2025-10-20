@@ -240,6 +240,7 @@ services:
     description: "Backend API Laravel"
     icon: mdi-api
     image: ${REGISTRY_URL}/api:latest
+    dev_path: ../../api
     subdomain: "api"
     internal_port: 8000
     env_file: .env.api.prod
