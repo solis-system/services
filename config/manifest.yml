@@ -130,6 +130,40 @@ services:
       - uptime_data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
 
+  woodpecker-server:
+    group: 2
+    image: woodpeckerci/woodpecker-server:v2.7.1
+    title: "Woodpecker CI"
+    description: "Serveur CI/CD auto-hébergé"
+    icon: mdi-bird
+    subdomain: woodpecker
+    internal_port: 8000
+    storage: internal
+    env_file: .env.woodpecker
+    environment:
+      - WOODPECKER_OPEN=true
+    ports:
+      - 9000:9000
+    volumes:
+      - woodpecker-server_data:/var/lib/woodpecker
+
+  woodpecker-agent:
+    group: 2
+    image: woodpeckerci/woodpecker-agent:v2.7.1
+    title: "Woodpecker Agent"
+    description: "Agent d'exécution CI/CD"
+    icon: mdi-cog
+    env_file: .env.woodpecker
+    environment:
+      - WOODPECKER_SERVER=woodpecker-server:9000
+      - WOODPECKER_MAX_WORKFLOWS=4
+      - WOODPECKER_BACKEND=docker
+      - WOODPECKER_BACKEND_DOCKER_NETWORK=proxy-network
+    depends_on:
+      - woodpecker-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
         #  minio:
         # group: 3
         # title: "Minio"

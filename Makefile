@@ -235,6 +235,22 @@ exec:
 	fi
 
 # =============================================================================
+# CI/CD Image Management
+# =============================================================================
+
+.PHONY: ci-image-build
+ci-image-build:
+	@echo "→ Building lola-ci-deploy image..."
+	@docker build -t registry.solisws.fr/lola-ci-deploy:latest ./ci
+	@echo "✓ Image built: registry.solisws.fr/lola-ci-deploy:latest"
+
+.PHONY: ci-image-push
+ci-image-push: ci-image-build
+	@echo "→ Pushing lola-ci-deploy image..."
+	@docker push registry.solisws.fr/lola-ci-deploy:latest
+	@echo "✓ Image pushed to registry"
+
+# =============================================================================
 # Maintenance
 # =============================================================================
 
@@ -296,6 +312,10 @@ help:
 	@echo "  make clean           Remove stopped containers, unused networks/volumes"
 	@echo "  make clean-all       Deep clean (removes ALL unused Docker resources)"
 	@echo ""
+	@echo "🔧 CI/CD IMAGE MANAGEMENT"
+	@echo "  make ci-image-build      Build lola-ci-deploy image"
+	@echo "  make ci-image-push       Build and push lola-ci-deploy image"
+	@echo ""
 	@echo "📋 OPTIONS"
 	@echo "  ENV=production       Set environment (default: production)"
 	@echo "  ENV=development      Use development overrides"
@@ -308,9 +328,11 @@ help:
 	@echo "    make restart SERVICE=api_prod      (explicit form)"
 	@echo ""
 	@echo "💡 EXAMPLES"
-	@echo "  make up ENV=development              # Start in dev mode"
-	@echo "  make restart api_prod                # Restart API service"
-	@echo "  make logs api_prod FOLLOW=1          # Follow API logs"
+	@echo "  make up ENV=development                  # Start in dev mode"
+	@echo "  make restart api_prod                    # Restart API service"
+	@echo "  make logs api_prod FOLLOW=1              # Follow API logs"
+	@echo "  make start woodpecker-server             # Start Woodpecker CI"
+	@echo "  make logs woodpecker-server FOLLOW=1     # Follow Woodpecker logs"
 	@echo "  make exec api_prod CMD='php artisan migrate'"
-	@echo "  make update api_prod                 # Pull + restart API"
+	@echo "  make update api_prod                     # Pull + restart API"
 	@echo ""
