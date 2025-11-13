@@ -225,7 +225,6 @@ services:
     description: "Base de donnes"
     icon: mdi-database
     image: windev/hfsql:305064
-    storage: external
     volumes:
       - hfsql_data:/var/lib/hfsql
     environment:
