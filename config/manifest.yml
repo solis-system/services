@@ -231,6 +231,7 @@ services:
     environment:
       - HFSQL_RANDOM_PASSWORD
       - HFSQL_USER
+    internal_port: 4900
     ports:
       - 4900:4900
 
