@@ -228,8 +228,7 @@ services:
     volumes:
       - hfsql_data:/var/lib/hfsql
     environment:
-      - HFSQL_ALLOW_EMPTY_PASSWORD
-      - HFSQL_RANDOM_PASSWORD
+      - HFSQL_PASSWORD
       - HFSQL_USER
     internal_port: 4900
     ports:
