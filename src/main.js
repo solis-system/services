@@ -178,11 +178,15 @@ class ConfigGenerator {
           volumes: [
             '/var/run/docker.sock:/var/run/docker.sock',
             './Caddyfile:/etc/caddy/Caddyfile',
+            'caddy_data:/data',
           ],
           ports: ['80:80', '443:443', '443:443/udp'],
           restart: 'always',
           networks: [config.NETWORK_NAME],
         },
+      },
+      volumes: {
+        caddy_data: {},
       },
       networks: {
         [config.NETWORK_NAME]: {
