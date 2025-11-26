@@ -18,6 +18,8 @@ services:
       #    storage: internal
       #    volumes:
       # - webdev-a_data:/var/lib/WEBDEV/30.0/
+    volumes:
+      - ./WEBDEV.conf:/etc/PC SOFT/WEBDEV/30.0/WEBDEV.conf
     environment:
       - NUMERO_DE_SERIE
       - CLE_D_ACTIVATION
