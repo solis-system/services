@@ -13,7 +13,7 @@ services:
     title: "Serveur Application"
     description: "Webdev 2025"
     icon: mdi-server-minus
-    image: webdev-a
+    image: windev/webdev:304061
     subdomain: ws-a
       #    storage: internal
       #    volumes:
