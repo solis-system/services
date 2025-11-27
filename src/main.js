@@ -152,7 +152,7 @@ class ConfigGenerator {
 
     for (const [serviceName, service] of this.servicesObject) {
       if (!service.dev_path) continue
-      dockerCompose.services[serviceName] = {
+      const devService = {
         container_name: serviceName,
         build: {
           context: service.dev_path,
@@ -161,6 +161,13 @@ class ConfigGenerator {
         volumes: [`${service.dev_path}:/app`],
         ports: [`${service.internal_port}:${service.internal_port}`]
       }
+
+      // En mode dev, utiliser le .env local au lieu du fichier copié
+      if (service.env_file) {
+        devService.env_file = [`${service.dev_path}/.env`]
+      }
+
+      dockerCompose.services[serviceName] = devService
     }
     return files.yamlDump(dockerCompose)
   }
