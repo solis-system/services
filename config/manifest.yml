@@ -221,6 +221,22 @@ services:
     ports:
       - 3306:3306
 
+  postgres:
+    group: 3
+    title: "PostgreSQL"
+    description: "Base de donnees relationnelle"
+    icon: mdi-elephant
+    image: postgres:16-alpine
+    storage: external
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    ports:
+      - 5432:5432
+
   hfsql:
     group: 3
     title: "HSQL"
