@@ -21,11 +21,13 @@ endif
 ENV ?= production
 
 # Docker Compose configuration
-DOCKER_COMPOSE_FILES = -f dist/proxy.docker-compose.yml -f dist/docker-compose.yml
 ifeq ($(ENV),development)
-    DOCKER_COMPOSE_FILES += -f dist/docker-compose.dev.yml
-    BUILD_OPTION = --build
+    # En dev: pas de proxy, pas de build des images prod
+    DOCKER_COMPOSE_FILES = -f dist/docker-compose.yml
+    BUILD_OPTION =
 else
+    # En prod: proxy + services
+    DOCKER_COMPOSE_FILES = -f dist/proxy.docker-compose.yml -f dist/docker-compose.yml
     BUILD_OPTION =
 endif
 
@@ -331,8 +333,6 @@ help:
 	@echo "  make up ENV=development                  # Start in dev mode"
 	@echo "  make restart api_prod                    # Restart API service"
 	@echo "  make logs api_prod FOLLOW=1              # Follow API logs"
-	@echo "  make start woodpecker-server             # Start Woodpecker CI"
-	@echo "  make logs woodpecker-server FOLLOW=1     # Follow Woodpecker logs"
 	@echo "  make exec api_prod CMD='php artisan migrate'"
 	@echo "  make update api_prod                     # Pull + restart API"
 	@echo ""

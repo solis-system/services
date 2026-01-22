@@ -1,5 +1,4 @@
 .env
-.env.woodpecker
 .idea
 dist
 node_modules

@@ -40,8 +40,8 @@ if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
     echo "⚠️ Tag $NEW_TAG already exists on remote, skipping tag creation."
   else
     echo "🏷️ Creating new tag: $NEW_TAG"
-    git config --global user.email "ci@woodpecker.local"
-    git config --global user.name "Woodpecker CI"
+    git config --global user.email "ci@github-actions.local"
+    git config --global user.name "GitHub Actions CI"
     git tag "$NEW_TAG"
     git push origin "$NEW_TAG"
   fi
@@ -82,7 +82,6 @@ if [ -n "$BUILD_ARGS" ]; then
 fi
 
 # Build depuis le répertoire de travail courant
-# (Woodpecker clone le repo dans /woodpecker/src par défaut)
 docker build "${DOCKER_BUILD_ARGS[@]}" .
 
 # --- Step 2: Push all tags

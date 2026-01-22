@@ -1,5 +1,9 @@
 services:
+  # ============================================================================
+  # SERVICES DE PRODUCTION UNIQUEMENT
+  # ============================================================================
   nocodb:
+    env: production
     group: 1
     title: "NocoDB"
     description: "Base de donnee"
@@ -9,15 +13,13 @@ services:
     internal_port: 8080
 
   webdev-a:
+    env: production
     group: 1
     title: "Serveur Application"
     description: "Webdev 2025"
     icon: mdi-server-minus
     image: windev/webdev:304061
     subdomain: ws-a
-      #    storage: internal
-      #    volumes:
-      # - webdev-a_data:/var/lib/WEBDEV/30.0/
     volumes:
       - ./WEBDEV.conf:/etc/PC SOFT/WEBDEV/30.0/WEBDEV.conf
     environment:
@@ -27,21 +29,18 @@ services:
     command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
 
   wstest:
+    env: production
     group: 1
     title: "Serveur Application"
     description: "Webdev 2025"
     icon: mdi-server-minus
-    image:  windev/webdev:304061
+    image: windev/webdev:304061
     subdomain: wstest
     volumes:
       - ./WEBDEV.conf:/etc/PC SOFT/WEBDEV/30.0/WEBDEV.conf
-#    environment:
-#      - NUMERO_DE_SERIE
-#      - CLE_D_ACTIVATION
-#      - TZ
-#    command: --configuration=${NUMERO_DE_SERIE}-${CLE_D_ACTIVATION}
 
   homepage:
+    env: production
     group: 2
     title: "Home"
     description: ""
@@ -81,6 +80,7 @@ services:
     storage: internal
 
   registry-ui:
+    env: production
     group: 2
     title: "Registry UI"
     description: "Interface web image docker"
@@ -95,6 +95,7 @@ services:
       - SINGLE_REGISTRY
 
   pma:
+    env: production
     group: 2
     title: "PHPMyAdmin"
     description: "SQL Viewer"
@@ -105,6 +106,7 @@ services:
       - mariadb
 
   n8n:
+    env: production
     group: 2
     image: docker.n8n.io/n8nio/n8n
     title: "n8n"
@@ -120,6 +122,7 @@ services:
       - n8n_data:/home/node/.n8n
 
   uptime:
+    env: production
     group: 2
     image: louislam/uptime-kuma:1.23.8
     title: "Uptime Kuma"
@@ -130,40 +133,6 @@ services:
     storage: internal
     volumes:
       - uptime_data:/app/data
-      - /var/run/docker.sock:/var/run/docker.sock
-
-  woodpecker-server:
-    group: 2
-    image: woodpeckerci/woodpecker-server:v2.7.1
-    title: "Woodpecker CI"
-    description: "Serveur CI/CD auto-hébergé"
-    icon: mdi-bird
-    subdomain: woodpecker
-    internal_port: 8000
-    storage: internal
-    env_file: .env.woodpecker
-    environment:
-      - WOODPECKER_OPEN=true
-    ports:
-      - 9000:9000
-    volumes:
-      - woodpecker-server_data:/var/lib/woodpecker
-
-  woodpecker-agent:
-    group: 2
-    image: woodpeckerci/woodpecker-agent:v2.7.1
-    title: "Woodpecker Agent"
-    description: "Agent d'exécution CI/CD"
-    icon: mdi-cog
-    env_file: .env.woodpecker
-    environment:
-      - WOODPECKER_SERVER=woodpecker-server:9000
-      - WOODPECKER_MAX_WORKFLOWS=4
-      - WOODPECKER_BACKEND=docker
-      - WOODPECKER_BACKEND_DOCKER_NETWORK=proxy-network
-    depends_on:
-      - woodpecker-server
-    volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
         #  minio:
@@ -183,6 +152,7 @@ services:
         # command: server /data --console-address :9090
 
   registry:
+    env: production
     group: 3
     title: "Docker Registry"
     description: "Stockage d'image docker private"
@@ -204,6 +174,8 @@ services:
     storage: internal
     volumes:
       - redis_data:/data
+    ports:
+      - 6379:6379
 
   mariadb:
     group: 3
@@ -222,6 +194,7 @@ services:
       - 3306:3306
 
   postgres:
+    env: production
     group: 3
     title: "PostgreSQL"
     description: "Base de donnees relationnelle"
@@ -238,6 +211,7 @@ services:
       - 5432:5432
 
   hfsql:
+    env: production
     group: 3
     title: "HSQL"
     description: "Base de donnes"
@@ -253,18 +227,20 @@ services:
     ports:
       - 4900:4900
 
+# --- Services de production/test (uniquement en ENV=production) ---
   api_prod:
+    env: production
     group: 1
     title: "Solisws API prod"
     description: "Backend API Laravel"
     icon: mdi-api
     image: ${REGISTRY_URL}/api:latest
-    dev_path: ../../api
     subdomain: "api"
     internal_port: 8000
     env_file: .env.api.prod
 
   app_prod:
+    env: production
     group: 1
     title: "Solisws PWA prod"
     description: "VueJS application"
@@ -274,17 +250,18 @@ services:
     internal_port: 8080
 
   api_test:
+    env: production
     group: 1
     title: "Solisws API test"
     description: "Backend API Laravel"
     icon: mdi-api
     image: ${REGISTRY_URL}/api:test
-    dev_path: ../../api
     subdomain: "api.test"
     internal_port: 8000
     env_file: .env.api.test
 
   app_test:
+    env: production
     group: 1
     title: "Solisws PWA test"
     description: "VueJS application"

@@ -12,7 +12,16 @@ class ConfigGenerator {
     this.ymlData = files.readYamlFile(ymlPath)
     if (!this.ymlData) logger.error('Error reading YAML file')
 
-    this.servicesObject = Object.entries(this.ymlData.services || {})
+    // Filtrer les services selon l'environnement
+    const allServices = Object.entries(this.ymlData.services || {})
+    this.servicesObject = allServices.filter(([serviceName, service]) => {
+      const serviceEnv = service.env || 'all'
+      // 'all' = toujours inclus, sinon doit correspondre à ENV
+      if (serviceEnv === 'all') return true
+      if (serviceEnv === config.ENV) return true
+      logger.info(`Skipping service '${serviceName}' (env: ${serviceEnv}, current: ${config.ENV})`)
+      return false
+    })
 
     files.removeDir(config.OUTPUT_DIR)
 
@@ -39,12 +48,15 @@ class ConfigGenerator {
     const servicesYml = this.generateServicesYml()
     files.writeFile(config.OUTPUT_DIR, 'homepage_services.yaml', servicesYml)
 
-    const proxyDockerComposeYml = this.generateProxyDockerCompose()
-    files.writeFile(
-      config.OUTPUT_DIR,
-      'proxy.docker-compose.yml',
-      proxyDockerComposeYml
-    )
+    // Générer le proxy uniquement en production
+    if (config.ENV === 'production') {
+      const proxyDockerComposeYml = this.generateProxyDockerCompose()
+      files.writeFile(
+        config.OUTPUT_DIR,
+        'proxy.docker-compose.yml',
+        proxyDockerComposeYml
+      )
+    }
 
     logger.info('Files generated successfully!')
   }
