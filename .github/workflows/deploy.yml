@@ -106,7 +106,10 @@ jobs:
         run: |
           SERVICE="${{ inputs.service_name }}_${{ steps.env.outputs.env }}"
           echo "🔄 Updating service: $SERVICE"
-          make update $SERVICE
+
+          # Pull + recreate le conteneur (sans régénérer les configs)
+          docker compose -f dist/docker-compose.yml -f dist/proxy.docker-compose.yml pull $SERVICE
+          docker compose -f dist/docker-compose.yml -f dist/proxy.docker-compose.yml up -d $SERVICE
 
       # Notification Mattermost désactivée temporairement pour les tests
       # - name: Send Mattermost notification
