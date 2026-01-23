@@ -111,35 +111,31 @@ jobs:
           docker compose -f dist/docker-compose.yml -f dist/proxy.docker-compose.yml pull $SERVICE
           docker compose -f dist/docker-compose.yml -f dist/proxy.docker-compose.yml up -d $SERVICE
 
-      # Notification Mattermost désactivée temporairement pour les tests
-      # - name: Send Mattermost notification
-      #   if: always()
-      #   run: |
-      #     DEFAULT_WEBHOOK="https://mattermost.solisws.fr/hooks/c97qgck97bgz3ju8ueu1gdx5uc"
-      #     WEBHOOK="${{ inputs.mattermost_webhook }}"
-      #     WEBHOOK="${WEBHOOK:-$DEFAULT_WEBHOOK}"
-      #
-      #     if [[ "${{ github.ref_name }}" == "main" ]]; then
-      #       SERVICE_URL="${{ inputs.prod_url }}"
-      #       TAG_DISPLAY="${{ steps.env.outputs.tag }}"
-      #     else
-      #       SERVICE_URL="${{ inputs.test_url }}"
-      #       TAG_DISPLAY="${{ steps.env.outputs.tag }}"
-      #     fi
-      #
-      #     DISPLAY_NAME="${{ inputs.app_display_name }}"
-      #     IMAGE_SHORT=$(echo "${{ inputs.image_name }}" | awk -F'/' '{print $NF}')
-      #     REGISTRY_URL="https://registry.solisws.fr/#!/taglist/${IMAGE_SHORT}"
-      #
-      #     if [[ "${{ job.status }}" == "success" ]]; then
-      #       MESSAGE="#### 🚀 Déploiement: **${DISPLAY_NAME}**\n📦 Version: [${TAG_DISPLAY}](${REGISTRY_URL})"
-      #       if [ -n "$SERVICE_URL" ]; then
-      #         MESSAGE="${MESSAGE}\n🌐 Service: ${SERVICE_URL}"
-      #       fi
-      #     else
-      #       MESSAGE="#### ❌ Déploiement échoué: **${DISPLAY_NAME}**\n🔗 [Voir les logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
-      #     fi
-      #
-      #     curl -s -X POST -H 'Content-Type: application/json' \
-      #          -d "{\"text\":\"${MESSAGE}\"}" \
-      #          "$WEBHOOK" || true
+      - name: Send Mattermost notification
+        if: always()
+        run: |
+          DEFAULT_WEBHOOK="https://mattermost.solisws.fr/hooks/c97qgck97bgz3ju8ueu1gdx5uc"
+          WEBHOOK="${{ inputs.mattermost_webhook }}"
+          WEBHOOK="${WEBHOOK:-$DEFAULT_WEBHOOK}"
+
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            SERVICE_URL="${{ inputs.prod_url }}"
+            TAG_DISPLAY="${{ steps.env.outputs.tag }}"
+          else
+            SERVICE_URL="${{ inputs.test_url }}"
+            TAG_DISPLAY="${{ steps.env.outputs.tag }}"
+          fi
+
+          DISPLAY_NAME="${{ inputs.app_display_name }}"
+          IMAGE_SHORT=$(echo "${{ inputs.image_name }}" | awk -F'/' '{print $NF}')
+          REGISTRY_URL="https://registry.solisws.fr/#!/taglist/${IMAGE_SHORT}"
+
+          if [[ "${{ job.status }}" == "success" ]]; then
+            MESSAGE="#### 🚀 Déploiement: **${DISPLAY_NAME}**\n📦 Version: [${TAG_DISPLAY}](${REGISTRY_URL})\n🌐 Service: ${SERVICE_URL}"
+          else
+            MESSAGE="#### ❌ Déploiement échoué: **${DISPLAY_NAME}**\n🔗 [Voir les logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          fi
+
+          curl -s -X POST -H 'Content-Type: application/json' \
+               -d "{\"text\":\"${MESSAGE}\"}" \
+               "$WEBHOOK" || true
