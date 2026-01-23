@@ -11,6 +11,10 @@ on:
         description: "Docker registry password"
         required: true
         type: string
+      service_name:
+        description: "Nom du service pour make update (api ou app)"
+        required: true
+        type: string
       mattermost_webhook:
         description: "Webhook Mattermost (optionnel)"
         required: false
@@ -31,38 +35,107 @@ on:
         description: "URL de l'environnement de test"
         required: false
         type: string
+      services_path:
+        description: "Chemin vers le dossier services sur le serveur"
+        required: false
+        type: string
+        default: "/home/ubuntu/services"
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, solis]
 
     steps:
-      # 1️⃣ Checkout du repo appelant (ex: frontend ou backend)
       - name: Checkout target repo
         uses: actions/checkout@v4
 
-# 2️⃣ Checkout du repo services (maintenant public)
-      - name: Checkout services repo
-        uses: actions/checkout@v4
-        with:
-          repository: solis-system/services
-          ref: main
-          path: services
+      - name: Determine environment
+        id: env
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "env=prod" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "env=test" >> $GITHUB_OUTPUT
+            echo "tag=test" >> $GITHUB_OUTPUT
+          fi
 
-      # 3️⃣ Setup Docker
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Login to Docker Registry
+        run: |
+          echo "${{ inputs.docker_password }}" | docker login https://registry.solisws.fr -u admin --password-stdin
 
-      # 4️⃣ Exécution du scripts du repo services
-      - name: Run deploy scripts
-        shell: bash
-        run: bash services/.github/scripts/deploy.sh
-        env:
-          DOCKER_PASSWORD: ${{ inputs.docker_password }}
-          IMAGE_NAME: ${{ inputs.image_name }}
-          MATTERMOST_WEBHOOK: ${{ inputs.mattermost_webhook }}
-          BUILD_ARGS: ${{ inputs.build_args }}
-          APP_DISPLAY_NAME: ${{ inputs.app_display_name }}
-          PROD_URL: ${{ inputs.prod_url }}
-          TEST_URL: ${{ inputs.test_url }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
+      - name: Build Docker image
+        run: |
+          BUILD_ARGS=""
+          if [ -n "${{ inputs.build_args }}" ]; then
+            IFS=',' read -ra ARGS <<< "${{ inputs.build_args }}"
+            for arg in "${ARGS[@]}"; do
+              BUILD_ARGS="$BUILD_ARGS --build-arg $arg"
+            done
+          fi
+
+          docker build $BUILD_ARGS \
+            -t ${{ inputs.image_name }}:${{ steps.env.outputs.tag }} \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ inputs.image_name }}:${{ steps.env.outputs.tag }}
+
+          # Pour production, aussi pusher avec le tag version
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            git fetch --tags
+            TAG=$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo "0.0.0")
+            IFS='.' read -r -a V <<< "$TAG"
+            NEW_TAG="${V[0]:-0}.${V[1]:-0}.$(( ${V[2]:-0} + 1 ))"
+
+            docker tag ${{ inputs.image_name }}:latest ${{ inputs.image_name }}:$NEW_TAG
+            docker push ${{ inputs.image_name }}:$NEW_TAG
+
+            # Créer le tag git
+            git config --global user.email "actions@github.com"
+            git config --global user.name "GitHub Actions"
+            git tag "$NEW_TAG" 2>/dev/null || true
+            git push origin "$NEW_TAG" 2>/dev/null || true
+
+            echo "version_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update service on server
+        working-directory: ${{ inputs.services_path }}
+        run: |
+          SERVICE="${{ inputs.service_name }}_${{ steps.env.outputs.env }}"
+          echo "🔄 Updating service: $SERVICE"
+          make update $SERVICE
+
+      - name: Send Mattermost notification
+        if: always()
+        run: |
+          DEFAULT_WEBHOOK="https://mattermost.solisws.fr/hooks/c97qgck97bgz3ju8ueu1gdx5uc"
+          WEBHOOK="${{ inputs.mattermost_webhook }}"
+          WEBHOOK="${WEBHOOK:-$DEFAULT_WEBHOOK}"
+
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            SERVICE_URL="${{ inputs.prod_url }}"
+            TAG_DISPLAY="${{ steps.env.outputs.tag }}"
+          else
+            SERVICE_URL="${{ inputs.test_url }}"
+            TAG_DISPLAY="${{ steps.env.outputs.tag }}"
+          fi
+
+          DISPLAY_NAME="${{ inputs.app_display_name }}"
+          IMAGE_SHORT=$(echo "${{ inputs.image_name }}" | awk -F'/' '{print $NF}')
+          REGISTRY_URL="https://registry.solisws.fr/#!/taglist/${IMAGE_SHORT}"
+
+          if [[ "${{ job.status }}" == "success" ]]; then
+            MESSAGE="#### 🚀 Déploiement: **${DISPLAY_NAME}**\n📦 Version: [${TAG_DISPLAY}](${REGISTRY_URL})"
+            if [ -n "$SERVICE_URL" ]; then
+              MESSAGE="${MESSAGE}\n🌐 Service: ${SERVICE_URL}"
+            fi
+          else
+            MESSAGE="#### ❌ Déploiement échoué: **${DISPLAY_NAME}**\n🔗 [Voir les logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          fi
+
+          curl -s -X POST -H 'Content-Type: application/json' \
+               -d "{\"text\":\"${MESSAGE}\"}" \
+               "$WEBHOOK" || true
