@@ -149,21 +149,44 @@ services:
       - uptime_data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
 
-        #  minio:
-        # group: 3
-        # title: "Minio"
-        # description: "S3 Storage"
-        # icon: mdi-nas
-        # image: quay.io/minio/minio
-        # subdomain: minio
-        # internal_port: 9090
-        #storage: external
-        #volumes:
-        # - minio_data:/data
-        # environment:
-        # - MINIO_ROOT_USER
-        # - MINIO_ROOT_PASSWORD
-        # command: server /data --console-address :9090
+  # --- Observability Stack ---
+  tempo:
+    env: all
+    group: 2
+    title: "Tempo"
+    description: "Distributed tracing backend"
+    icon: mdi-chart-timeline-variant
+    image: grafana/tempo:2.6.1
+    command: "-config.file=/etc/tempo/tempo.yaml"
+    storage: internal
+    ports:
+      - 3200:3200
+      - 4317:4317
+      - 4318:4318
+    volumes:
+      - ../config/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo_data:/var/tempo
+
+  grafana:
+    env: all
+    group: 2
+    title: "Grafana"
+    description: "Observability dashboards"
+    icon: mdi-chart-areaspline
+    image: grafana/grafana-oss:11.4.0
+    subdomain: grafana
+    internal_port: 3000
+    storage: internal
+    depends_on:
+      - tempo
+    ports:
+      - 3033:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER
+      - GF_SECURITY_ADMIN_PASSWORD
+    volumes:
+      - ../config/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
 
   registry:
     env: production
@@ -206,6 +229,16 @@ services:
       - MARIADB_ROOT_PASSWORD
     ports:
       - 3306:3306
+
+  mariadb-backup:
+    env: production
+    group: 3
+    title: "MariaDB Backup"
+    description: "Backup quotidien vers MinIO"
+    icon: mdi-backup-restore
+    image: huacnlee/gobackup:latest
+    volumes:
+      - ../config/gobackup:/etc/gobackup
 
   postgres:
     env: production

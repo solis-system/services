@@ -1,0 +1,27 @@
+models:
+  mariadb_lola:
+    description: "Backup quotidien de la base lola (solisws.fr)"
+    schedule:
+      every: 1day
+      at: "02:00"
+    databases:
+      lola:
+        type: mysql
+        host: solisws.fr
+        port: 3306
+        database: lola
+        username: admin
+        password: Caring-Scorn
+        args: --single-transaction --quick --ssl=false
+    storages:
+      minio:
+        type: minio
+        keep: 30
+        bucket: mariadb
+        endpoint: http://minio:9000
+        region: eu-central-1
+        path: /backup
+        access_key_id: root
+        secret_access_key: CactiMatingYummy
+    compress_with:
+      type: tgz
