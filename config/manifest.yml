@@ -67,6 +67,20 @@ services:
 #    volumes:
 #      - ~/.docker/config.json:/config.json
 #      - /var/run/docker.sock:/var/run/docker.sock
+  prodevis-mail:
+    env: production
+    group: 2
+    title: "Prodevis Mail"
+    description: "Réception emails devis Prodevis"
+    icon: mdi-email-receive-outline
+    image: tiiiecherber/smtp-to-webhook:latest
+    ports:
+      - "25:25"
+    environment:
+      - WEBHOOK_URL
+      - WEBHOOK_SECRET
+      - MAX_MESSAGE_SIZE=26214400
+
   mailpit:
     group: 2
     title: "Mailpit"
